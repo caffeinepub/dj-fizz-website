@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T20:16:59.700Z",
+  "generatedAt": "2026-03-01T20:53:55.274Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,15 +11,14 @@
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-9",
-        "summary": "Save the uploaded image (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as the new DJ Fizz logo static asset at frontend/public/assets/generated/dj-fizz-logo.png, replacing the existing file. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-logo.png. Ensure the image container and any parent wrapper elements have no light background classes (no bg-white, bg-gray, or similar) so the logo renders cleanly against the dark hero background with no visible checkerboard artifact.",
+        "id": "REQ-15",
+        "summary": "In frontend/src/components/Gallery.tsx, completely remove any remaining content wrapper div and all its children from the Gallery section. The component should render only a minimal shell (e.g., the outer section element with an id for anchor linking) with no visible image cards, grid containers, headings nested inside content wrappers, or any other child content. Strip all JSX inside the section down to nothing — or at minimum remove every div, card, image, and text element that is currently rendering visible content inside the Gallery section on the page.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/dj-fizz-logo.png",
-          "frontend/src/components/Hero.tsx"
+          "frontend/src/components/Gallery.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/Hero.tsx"
+          "frontend/src/components/Gallery.tsx"
         ]
       }
     ]
@@ -29,8 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/dj-fizz-logo.dim_1200x600.png",
-    "frontend/src/components/Hero.tsx",
+    "frontend/src/components/Gallery.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

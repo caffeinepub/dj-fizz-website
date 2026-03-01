@@ -8,7 +8,19 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-djblack">
+    <section className="relative min-h-screen flex flex-col overflow-hidden bg-djblack">
+      {/* Full-width Hero Banner */}
+      <div className="w-full">
+        <img
+          src="/assets/generated/dj-fizz-hero-banner.dim_1920x1080.png"
+          alt="DJ Fizz"
+          className="w-full object-cover"
+          style={{
+            filter: 'drop-shadow(0 0 40px rgba(57,255,20,0.3))',
+          }}
+        />
+      </div>
+
       {/* Animated Stage Lighting Beams */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" ref={beamsRef}>
         {/* Radial glow at bottom */}
@@ -78,21 +90,7 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto pt-20">
-        {/* Logo */}
-        <div className="mb-8 animate-fade-in-up bg-transparent">
-          <img
-            src="/assets/0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png"
-            alt="DJ Fizz"
-            className="h-40 md:h-56 w-auto mx-auto object-contain"
-            style={{
-              filter: 'drop-shadow(0 0 30px rgba(57,255,20,0.5))',
-              mixBlendMode: 'screen',
-              background: 'transparent',
-            }}
-          />
-        </div>
-
+      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto py-16 flex-1 flex flex-col items-center justify-center">
         {/* Headline */}
         <h1
           className="font-display text-6xl md:text-8xl lg:text-9xl text-white mb-4 animate-fade-in-up-delay-1 tracking-wider"

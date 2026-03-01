@@ -1,11 +1,9 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the existing DJ Fizz hero logo with the newly uploaded PNG featuring neon green graffiti text, DJ turntable, and headphones.
+**Goal:** Remove all visible content from the Gallery section component, leaving only a minimal shell.
 
 **Planned changes:**
-- Save the uploaded image (`0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png`) as the new logo asset at `frontend/public/assets/generated/dj-fizz-logo.png`, overwriting the previous file.
-- Update the `<img>` element in `Hero.tsx` to reference the new logo path `/assets/generated/dj-fizz-logo.png`.
-- Remove any light background classes (e.g. `bg-white`, `bg-gray`) from the logo container and parent wrappers so the transparent PNG renders cleanly against the dark hero background.
+- In `frontend/src/components/Gallery.tsx`, strip all JSX inside the section element — removing any content wrapper divs, grid containers, image cards, headings, and text elements, leaving only the outer section element with its id attribute.
 
-**User-visible outcome:** The Hero section displays the new neon green DJ Fizz logo without any checkerboard or white background artifact.
+**User-visible outcome:** The Gallery section displays nothing between the MoreThanMusic and Testimonials sections on the page, with no image cards or content visible.

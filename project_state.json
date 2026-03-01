@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
+  "projectStateVersion": 25,
   "summary": "Building a modern, elegant DJ website for DJ Fizz. Color palette: black base with electric green accents and glow effects (matching the DJ Fizz logo). Full-width cinematic layout with smooth scrolling, fade-in animations, and stage lighting effects. Sections include: hero, about (with portrait photo), services (4-column), premium add-ons, testimonials, event gallery, SEO section, 'More Than Just Music' section, and a booking form. Booking form submissions stored in backend with an admin page for viewing. No flat prices — custom packages messaging. Targeting weddings, corporate events, school dances, and private parties in Raleigh, NC.",
   "architectural_notes": [
     "Color palette: black base with electric green accents and glow effects, matched to the DJ Fizz logo (no gold)",
@@ -8,10 +8,9 @@
     "No flat pricing displayed — use 'Custom Packages Built Around Your Vision' messaging"
   ],
   "known_issues": [
-    "Hero section PNG logo shows checkered background (transparent background indicator) — container background needs to be set to dark/transparent to match site theme"
+    "Gallery section content wrapper still visible after attempted removal — needs to be fully deleted from Gallery.tsx"
   ],
-  "isFixRequest": false,
-  "imageRequirements": "## Edit Images\n- Replace content entirely with the uploaded DJ Fizz logo PNG featuring neon green graffiti text, DJ turntable, and headphones on a transparent background (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png > dj-fizz-logo.dim_1200x600.png)",
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-update-the-entire-site-color-palette-to-match-the-dj-fizz-logo-img-0756-png-deep-black-000000-0a0a0a-as-the-base-electric-neon-green-39ff14-or-closest-match-to-logo-green-as-the-primary-accent-color-for-buttons-glows-borders-highlights-and-interactive-elements-replace-any-gold-navy-accent-usage-with-this-green-glow-effects-on-buttons-cards-and-section-accents-should-use-a-green-radial-or-box-shadow-glow-consistent-with-the-logo-s-energy-style",
@@ -74,6 +73,54 @@
       "title": "Save the uploaded image (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as the new DJ Fizz logo static asset at frontend/public/assets/generated/dj-fizz-logo.png, replacing the existing file. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-logo.png. Ensure the image container and any parent wrapper elements have no light background classes (no bg-white, bg-gray, or similar) so the logo renders cleanly against the dark hero background with no visible checkerboard artifact.",
       "reqIds": [
         "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-hero-component-frontend-src-components-hero-tsx-add-a-solid-black-000000-background-directly-to-the-container-element-wrapping-the-img-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-img-1-apply-bg-black-or-style-backgroundcolor-000000-to-that-immediate-wrapper-div-so-the-checkered-transparent-pattern-behind-the-logo-png-is-completely-hidden-and-the-logo-renders-against-a-solid-black-background",
+      "title": "In the Hero component (frontend/src/components/Hero.tsx), add a solid black (#000000) background directly to the container element wrapping the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1]. Apply `bg-black` (or `style={{ backgroundColor: '#000000' }}`) to that immediate wrapper div so the checkered transparent pattern behind the logo PNG is completely hidden and the logo renders against a solid black background.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-save-the-uploaded-image-bd9c94d8-6f5b-4abb-9a7c-f15d1573fb8b-png-as-a-static-asset-at-frontend-public-assets-generated-dj-fizz-hero-banner-png-then-update-the-img-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-img-1-in-frontend-src-components-hero-tsx-to-reference-assets-generated-dj-fizz-hero-banner-png-the-image-must-be-displayed-full-width-across-the-entire-hero-section-remove-any-max-width-fixed-size-or-logo-sized-constraints-on-the-image-and-its-wrapper-apply-w-full-object-cover-and-ensure-the-container-spans-100-of-the-section-width-remove-the-solid-black-background-from-the-image-wrapper-div-since-this-banner-image-has-a-built-in-dark-background",
+      "title": "Save the uploaded image (BD9C94D8-6F5B-4ABB-9A7C-F15D1573FB8B.png) as a static asset at frontend/public/assets/generated/dj-fizz-hero-banner.png. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-hero-banner.png. The image must be displayed full-width across the entire hero section — remove any max-width, fixed-size, or logo-sized constraints on the image and its wrapper. Apply w-full, object-cover, and ensure the container spans 100% of the section width. Remove the solid black background from the image wrapper div since this banner image has a built-in dark background.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-page-s-fourth-section-section-4-locate-the-fifth-child-container-div-div-5-inside-the-inner-content-wrapper-at-xpath-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-delete-this-entire-div-element-and-all-its-children-from-the-component-jsx-including-the-nested-sub-element-at-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-div-2",
+      "title": "In the page's fourth section (section[4]), locate the fifth child container div (div[5]) inside the inner content wrapper at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]. Delete this entire div element and all its children from the component JSX, including the nested sub-element at /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]/div[2].",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-gallery-component-frontend-src-components-gallery-tsx-delete-the-entire-div-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-and-all-its-children-including-the-nested-elements-at-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-div-2-div-2-p-1-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-div-2-div-2-h3-1-and-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-div-2-div-1-remove-the-complete-fifth-gallery-card-div-5-and-all-its-descendant-jsx-from-the-component",
+      "title": "In the Gallery component (frontend/src/components/Gallery.tsx), delete the entire div element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5] and all its children, including the nested elements at /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]/div[2]/div[2]/p[1], /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]/div[2]/div[2]/h3[1], and /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]/div[2]/div[1]. Remove the complete fifth gallery card (div[5]) and all its descendant JSX from the component.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-gallery-component-frontend-src-components-gallery-tsx-delete-the-entire-div-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-4-div-2-and-all-its-children-including-the-nested-element-at-html-1-body-1-div-1-div-1-main-1-section-4-div-2-div-2-div-5-div-2-this-is-the-main-content-wrapper-div-of-the-gallery-section-remove-it-and-all-descendant-jsx-from-the-component",
+      "title": "In the Gallery component (frontend/src/components/Gallery.tsx), delete the entire div element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2] and all its children, including the nested element at /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2]/div[2]/div[5]/div[2]. This is the main content wrapper div of the Gallery section — remove it and all descendant JSX from the component.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-frontend-src-components-gallery-tsx-completely-remove-any-remaining-content-wrapper-div-and-all-its-children-from-the-gallery-section-the-component-should-render-only-a-minimal-shell-e-g-the-outer-section-element-with-an-id-for-anchor-linking-with-no-visible-image-cards-grid-containers-headings-nested-inside-content-wrappers-or-any-other-child-content-strip-all-jsx-inside-the-section-down-to-nothing-or-at-minimum-remove-every-div-card-image-and-text-element-that-is-currently-rendering-visible-content-inside-the-gallery-section-on-the-page",
+      "title": "In frontend/src/components/Gallery.tsx, completely remove any remaining content wrapper div and all its children from the Gallery section. The component should render only a minimal shell (e.g., the outer section element with an id for anchor linking) with no visible image cards, grid containers, headings nested inside content wrappers, or any other child content. Strip all JSX inside the section down to nothing — or at minimum remove every div, card, image, and text element that is currently rendering visible content inside the Gallery section on the page.",
+      "reqIds": [
+        "REQ-15"
       ],
       "version": 1
     }
@@ -152,6 +199,18 @@
     {
       "id": "AR-14",
       "summary": "Replace the current DJ Fizz logo image in the Hero section with the newly uploaded PNG (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png), saving it as the new logo asset and updating the img src reference",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Replace the current hero logo image with the newly uploaded DJ Fizz banner (DJ controller, headphones, neon green splatter) displayed as a full-width hero image",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Delete the section at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2] (and nested element div[2]/div[2]/div[5]/div[2]) from the Gallery component",
       "reqIds": [],
       "status": "pending"
     }
