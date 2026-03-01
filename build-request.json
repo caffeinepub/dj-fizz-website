@@ -1,36 +1,36 @@
 {
   "kind": "build_request",
-  "title": "Remove Gallery section content wrapper from Gallery.tsx",
+  "title": "Remove authentication gate from Admin page",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-15",
-      "text": "In frontend/src/components/Gallery.tsx, completely remove any remaining content wrapper div and all its children from the Gallery section. The component should render only a minimal shell (e.g., the outer section element with an id for anchor linking) with no visible image cards, grid containers, headings nested inside content wrappers, or any other child content. Strip all JSX inside the section down to nothing — or at minimum remove every div, card, image, and text element that is currently rendering visible content inside the Gallery section on the page.",
+      "id": "REQ-16",
+      "text": "In frontend/src/pages/AdminPage.tsx, remove the authentication check and any login gate that blocks access to the page. The /admin route must be fully accessible without any login or identity verification — remove any conditional rendering that shows an 'admin access required' or 'please log in' error message, and ensure all booking submissions are fetched and displayed immediately when the page loads without requiring authentication.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-latest"
         ],
         "quotes": [
-          "It is still there please remove"
+          "You may need admin access to view booking submissions. Please ensure you are logged in as an admin."
         ]
       },
       "acceptanceCriteria": [
-        "The Gallery section on the live page displays no image cards, grid layouts, or content wrapper divs.",
-        "Gallery.tsx contains no nested content wrapper divs with gallery card children.",
-        "The page renders without errors after the removal.",
-        "No visible gallery content appears between the MoreThanMusic and Testimonials sections."
+        "Navigating to /admin displays booking submissions without any login prompt or error message",
+        "No 'admin access required' or 'please log in' message is shown at any point on the Admin page",
+        "All stored booking form submissions are fetched and rendered on page load without requiring Internet Identity authentication",
+        "The Admin page retains its black and neon green styling"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files listed under frontend.immutablePaths.",
-    "Do not alter any other section components — only Gallery.tsx."
+    "Do not modify any immutable frontend paths (hooks, main.tsx, ui components)",
+    "Do not change the backend query function for fetching submissions"
   ],
   "nonGoals": [
-    "Adding new gallery images or placeholder content.",
-    "Restructuring any section other than Gallery.",
-    "Backend changes of any kind."
+    "Adding real authentication or role-based access control",
+    "Modifying the booking form submission flow",
+    "Changing the visual layout or styling of the Admin page beyond removing the error state"
   ],
   "imageRequirements": {
     "required": [],

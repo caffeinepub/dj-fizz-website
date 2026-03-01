@@ -1,22 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove Gallery section content wrapper from Gallery.tsx",
+  "title": "Remove authentication gate from Admin page",
   "requirements": [
     {
-      "id": "REQ-15",
-      "summary": "Strip all visible content from the Gallery section, leaving only a minimal shell element for anchor linking without any nested content wrapper divs, image cards, grid containers, headings, or other child elements",
+      "id": "REQ-16",
+      "summary": "Remove all authentication checks and login gates from the Admin page, making it publicly accessible without requiring Internet Identity login",
       "acceptanceCriteria": [
-        "The Gallery section on the live page displays no image cards, grid layouts, or content wrapper divs.",
-        "Gallery.tsx contains no nested content wrapper divs with gallery card children.",
-        "The page renders without errors after the removal.",
-        "No visible gallery content appears between the MoreThanMusic and Testimonials sections."
+        "Navigating to /admin displays booking submissions without any login prompt or error message",
+        "No 'admin access required' or 'please log in' message is shown at any point on the Admin page",
+        "All stored booking form submissions are fetched and rendered on page load without requiring Internet Identity authentication",
+        "The Admin page retains its black and neon green styling"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Gallery.tsx",
+          "path": "frontend/src/pages/AdminPage.tsx",
           "operation": "modify",
-          "description": "Remove all JSX content inside the Gallery section element, including any content wrapper divs, grid containers, headings, image cards, and decorative elements. Retain only the outer section element with id='gallery' for anchor link compatibility, but strip all child elements so that no visible gallery content renders on the page."
+          "description": "Remove the authentication check conditional rendering that displays 'You may need admin access to view booking submissions. Please ensure you are logged in as an admin.' Remove any dependency on useInternetIdentity hook or identity state checks. Ensure the page directly renders the booking submissions list without any authentication gates. Keep the existing black and neon green styling, loading states, and error handling for the data fetch itself."
         }
       ]
     }

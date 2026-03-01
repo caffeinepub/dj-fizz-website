@@ -15,5 +15,5 @@
   "frontend/src/components/BookingForm.tsx": "Eight-field booking inquiry form that submits to the Motoko backend via useSubmitForm mutation, with loading/success/error states and a trust statement.",
   "frontend/src/components/Footer.tsx": "Site footer with DJ Fizz logo, quick links, contact info, copyright with dynamic year, and caffeine.ai attribution with UTM tracking.",
   "frontend/src/pages/HomePage.tsx": "Home page that composes all site sections in order: Hero, About, Services, AddOns, MoreThanMusic, Gallery, Testimonials, SEOSection, BookingForm.",
-  "frontend/src/pages/AdminPage.tsx": "Admin dashboard at /admin that fetches and displays all booking form submissions from the backend in styled cards showing all 8 fields plus timestamp, with loading/error/empty states."
+  "frontend/src/pages/AdminPage.tsx": "Admin dashboard at /admin that requires Internet Identity login to view booking submissions — shows a styled login prompt when unauthenticated, fetches and displays all submissions in neon green glass cards once signed in, with loading/error/empty states and a logout button."
 }

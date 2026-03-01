@@ -1,9 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Remove all visible content from the Gallery section component, leaving only a minimal shell.
+**Goal:** Remove the authentication gate from the Admin page so booking submissions are accessible without any login or identity verification.
 
 **Planned changes:**
-- In `frontend/src/components/Gallery.tsx`, strip all JSX inside the section element — removing any content wrapper divs, grid containers, image cards, headings, and text elements, leaving only the outer section element with its id attribute.
+- Remove the authentication check and any conditional rendering that shows an "admin access required" or "please log in" message in `frontend/src/pages/AdminPage.tsx`
+- Ensure booking submissions are fetched and displayed immediately on page load without requiring authentication
 
-**User-visible outcome:** The Gallery section displays nothing between the MoreThanMusic and Testimonials sections on the page, with no image cards or content visible.
+**User-visible outcome:** Navigating to `/admin` immediately shows all booking submissions without any login prompt or error message, while retaining the existing black and neon green styling.

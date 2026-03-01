@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
+  "projectStateVersion": 27,
   "summary": "Building a modern, elegant DJ website for DJ Fizz. Color palette: black base with electric green accents and glow effects (matching the DJ Fizz logo). Full-width cinematic layout with smooth scrolling, fade-in animations, and stage lighting effects. Sections include: hero, about (with portrait photo), services (4-column), premium add-ons, testimonials, event gallery, SEO section, 'More Than Just Music' section, and a booking form. Booking form submissions stored in backend with an admin page for viewing. No flat prices — custom packages messaging. Targeting weddings, corporate events, school dances, and private parties in Raleigh, NC.",
   "architectural_notes": [
     "Color palette: black base with electric green accents and glow effects, matched to the DJ Fizz logo (no gold)",
@@ -8,7 +8,8 @@
     "No flat pricing displayed — use 'Custom Packages Built Around Your Vision' messaging"
   ],
   "known_issues": [
-    "Gallery section content wrapper still visible after attempted removal — needs to be fully deleted from Gallery.tsx"
+    "Gallery section content wrapper still visible after attempted removal — needs to be fully deleted from Gallery.tsx",
+    "Admin page shows authentication error blocking access — needs login gate removed so /admin is accessible without authentication"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -121,6 +122,14 @@
       "title": "In frontend/src/components/Gallery.tsx, completely remove any remaining content wrapper div and all its children from the Gallery section. The component should render only a minimal shell (e.g., the outer section element with an id for anchor linking) with no visible image cards, grid containers, headings nested inside content wrappers, or any other child content. Strip all JSX inside the section down to nothing — or at minimum remove every div, card, image, and text element that is currently rendering visible content inside the Gallery section on the page.",
       "reqIds": [
         "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-frontend-src-pages-adminpage-tsx-remove-the-authentication-check-and-any-login-gate-that-blocks-access-to-the-page-the-admin-route-must-be-fully-accessible-without-any-login-or-identity-verification-remove-any-conditional-rendering-that-shows-an-admin-access-required-or-please-log-in-error-message-and-ensure-all-booking-submissions-are-fetched-and-displayed-immediately-when-the-page-loads-without-requiring-authentication",
+      "title": "In frontend/src/pages/AdminPage.tsx, remove the authentication check and any login gate that blocks access to the page. The /admin route must be fully accessible without any login or identity verification — remove any conditional rendering that shows an 'admin access required' or 'please log in' error message, and ensure all booking submissions are fetched and displayed immediately when the page loads without requiring authentication.",
+      "reqIds": [
+        "REQ-16"
       ],
       "version": 1
     }

@@ -1,14 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T20:53:55.271Z",
-  "summary": "REQ-15 is fully implemented. Gallery.tsx has been reduced to a minimal shell rendering only a bare section element with id='gallery' and no content wrappers, image cards, grid containers, or any other visible content. The file-summaries and project_state also reflect this change accurately.",
-  "missing_requirements": [],
+  "generatedAt": "2026-03-01T21:12:14.157Z",
+  "summary": "The diff modifies frontend/src/pages/AdminPage.tsx, which is the correct file per REQ-16. However, the diff is truncated and we cannot fully confirm the removal of the authentication gate. The file summary in frontend-file-summaries.txt still describes the old behavior ('requires Internet Identity login to view booking submissions — shows a styled login prompt when unauthenticated'), suggesting the summary may not have been updated. The truncated code still imports useInternetIdentity and LogIn/LogOut icons, which were part of the authentication gate. This raises concern that the auth check may not have been fully removed, though the truncation prevents full confirmation.",
+  "missing_requirements": [
+    {
+      "id": "REQ-16",
+      "requirement": "Remove the authentication check and login gate from AdminPage.tsx so /admin is fully accessible without login or identity verification, with all submissions fetched and displayed immediately on page load.",
+      "reason": "The truncated diff still shows imports of useInternetIdentity, LogIn, and LogOut from the authentication flow. The frontend-file-summaries.txt still describes the page as requiring Internet Identity login. While the diff is truncated and may contain the removal further down, the visible evidence suggests the authentication gate may not have been fully removed.",
+      "evidence": [
+        "frontend/src/pages/AdminPage.tsx",
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.99,
+  "confidence": 0.45,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/Gallery.tsx",
+    "frontend/src/pages/AdminPage.tsx",
     "project_state.json"
   ]
 }

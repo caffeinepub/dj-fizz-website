@@ -1,5 +1,7 @@
 import { useGetAllSubmissions } from '../hooks/useQueries';
-import { Loader2, Inbox, Calendar, Users, MapPin, Mail, Phone, FileText, Clock } from 'lucide-react';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loader2, Inbox, Calendar, Users, MapPin, Mail, Phone, FileText, Clock, LogIn, LogOut } from 'lucide-react';
 import type { BookingForm } from '../backend';
 
 function formatTimestamp(ts: bigint): string {
@@ -94,7 +96,25 @@ function SubmissionCard({ submission }: { submission: BookingForm }) {
 }
 
 export default function AdminPage() {
+  const { identity, login, clear, loginStatus, isInitializing } = useInternetIdentity();
+  const queryClient = useQueryClient();
+  const isAuthenticated = !!identity;
+  const isLoggingIn = loginStatus === 'logging-in';
+
   const { data: submissions, isLoading, isError } = useGetAllSubmissions();
+
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (error: any) {
+      console.error('Login error:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await clear();
+    queryClient.clear();
+  };
 
   return (
     <main className="min-h-screen bg-djblack pt-24 pb-16">
@@ -111,34 +131,101 @@ export default function AdminPage() {
                 BOOKING SUBMISSIONS
               </h1>
             </div>
-            {submissions && submissions.length > 0 && (
-              <div
-                className="px-6 py-3 rounded-sm text-center"
-                style={{
-                  background: 'rgba(57,255,20,0.08)',
-                  border: '1px solid rgba(57,255,20,0.25)',
-                }}
-              >
-                <p className="font-display text-3xl text-neon-green text-glow-green">
-                  {submissions.length}
-                </p>
-                <p className="text-white/40 text-xs tracking-widest uppercase">Total</p>
-              </div>
-            )}
+            <div className="flex items-center gap-4">
+              {submissions && submissions.length > 0 && (
+                <div
+                  className="px-6 py-3 rounded-sm text-center"
+                  style={{
+                    background: 'rgba(57,255,20,0.08)',
+                    border: '1px solid rgba(57,255,20,0.25)',
+                  }}
+                >
+                  <p className="font-display text-3xl text-neon-green text-glow-green">
+                    {submissions.length}
+                  </p>
+                  <p className="text-white/40 text-xs tracking-widest uppercase">Total</p>
+                </div>
+              )}
+              {isAuthenticated && (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                >
+                  <LogOut size={14} />
+                  Logout
+                </button>
+              )}
+            </div>
           </div>
           <div className="section-divider mt-8" />
         </div>
 
-        {/* Loading */}
-        {isLoading && (
+        {/* Not authenticated — show login prompt */}
+        {!isInitializing && !isAuthenticated && (
+          <div
+            className="rounded-sm p-10 text-center"
+            style={{
+              background: 'rgba(57,255,20,0.04)',
+              border: '1px solid rgba(57,255,20,0.15)',
+            }}
+          >
+            <div
+              className="w-16 h-16 rounded-sm flex items-center justify-center mx-auto mb-6"
+              style={{
+                background: 'rgba(57,255,20,0.08)',
+                border: '1px solid rgba(57,255,20,0.2)',
+              }}
+            >
+              <LogIn size={28} className="text-neon-green" />
+            </div>
+            <p className="font-display text-2xl text-white tracking-wider mb-2">ADMIN LOGIN REQUIRED</p>
+            <p className="text-white/40 text-sm mb-8 max-w-sm mx-auto">
+              Sign in with your admin account to view booking submissions.
+            </p>
+            <button
+              onClick={handleLogin}
+              disabled={isLoggingIn}
+              className="inline-flex items-center gap-3 px-8 py-3 font-semibold text-sm tracking-widest uppercase rounded-sm transition-all duration-200 disabled:opacity-50"
+              style={{
+                background: isLoggingIn ? 'rgba(57,255,20,0.1)' : 'rgba(57,255,20,0.15)',
+                border: '1px solid rgba(57,255,20,0.4)',
+                color: '#39ff14',
+              }}
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                <>
+                  <LogIn size={16} />
+                  Sign In
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Initializing */}
+        {isInitializing && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <Loader2 size={40} className="text-neon-green animate-spin" />
+            <p className="text-white/40 text-sm tracking-widest uppercase">Initializing...</p>
+          </div>
+        )}
+
+        {/* Loading submissions */}
+        {isAuthenticated && isLoading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <Loader2 size={40} className="text-neon-green animate-spin" />
             <p className="text-white/40 text-sm tracking-widest uppercase">Loading submissions...</p>
           </div>
         )}
 
-        {/* Error */}
-        {isError && (
+        {/* Error fetching submissions */}
+        {isAuthenticated && isError && (
           <div
             className="rounded-sm p-8 text-center"
             style={{
@@ -148,13 +235,13 @@ export default function AdminPage() {
           >
             <p className="text-red-400 font-semibold mb-2">Unable to load submissions</p>
             <p className="text-white/40 text-sm">
-              You may need admin access to view booking submissions. Please ensure you are logged in as an admin.
+              Your account may not have admin privileges. Please contact the site owner.
             </p>
           </div>
         )}
 
         {/* Empty state */}
-        {!isLoading && !isError && submissions && submissions.length === 0 && (
+        {isAuthenticated && !isLoading && !isError && submissions && submissions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-6">
             <div
               className="w-20 h-20 rounded-sm flex items-center justify-center"
@@ -175,7 +262,7 @@ export default function AdminPage() {
         )}
 
         {/* Submissions list */}
-        {!isLoading && !isError && submissions && submissions.length > 0 && (
+        {isAuthenticated && !isLoading && !isError && submissions && submissions.length > 0 && (
           <div className="space-y-6">
             {[...submissions].reverse().map((submission, index) => (
               <SubmissionCard key={index} submission={submission} />

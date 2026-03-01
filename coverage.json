@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T20:53:55.274Z",
+  "generatedAt": "2026-03-01T21:12:14.160Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,14 +11,14 @@
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-15",
-        "summary": "In frontend/src/components/Gallery.tsx, completely remove any remaining content wrapper div and all its children from the Gallery section. The component should render only a minimal shell (e.g., the outer section element with an id for anchor linking) with no visible image cards, grid containers, headings nested inside content wrappers, or any other child content. Strip all JSX inside the section down to nothing — or at minimum remove every div, card, image, and text element that is currently rendering visible content inside the Gallery section on the page.",
+        "id": "REQ-16",
+        "summary": "In frontend/src/pages/AdminPage.tsx, remove the authentication check and any login gate that blocks access to the page. The /admin route must be fully accessible without any login or identity verification — remove any conditional rendering that shows an 'admin access required' or 'please log in' error message, and ensure all booking submissions are fetched and displayed immediately when the page loads without requiring authentication.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Gallery.tsx"
+          "frontend/src/pages/AdminPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/Gallery.tsx"
+          "frontend/src/pages/AdminPage.tsx"
         ]
       }
     ]
@@ -28,7 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/Gallery.tsx",
+    "frontend/src/pages/AdminPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
