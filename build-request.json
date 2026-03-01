@@ -1,0 +1,42 @@
+{
+  "kind": "build_request",
+  "title": "Replace Hero logo with newly uploaded DJ Fizz PNG",
+  "projectName": "DJ Fizz",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-9",
+      "text": "Save the uploaded image (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as the new DJ Fizz logo static asset at frontend/public/assets/generated/dj-fizz-logo.png, replacing the existing file. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-logo.png. Ensure the image container and any parent wrapper elements have no light background classes (no bg-white, bg-gray, or similar) so the logo renders cleanly against the dark hero background with no visible checkerboard artifact.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Replace original photo with the second one"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The newly uploaded PNG (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) is saved at frontend/public/assets/generated/dj-fizz-logo.png, overwriting the previous logo file.",
+        "The <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in Hero.tsx has its src set to /assets/generated/dj-fizz-logo.png.",
+        "No light background classes (bg-white, bg-gray, etc.) are present on the logo container or parent wrappers.",
+        "The new logo displays without a visible checkerboard transparent background pattern in the Hero section."
+      ]
+    }
+  ],
+  "constraints": [
+    "Only the Hero logo image and its container styling should be changed — no other Hero section content or layout should be modified.",
+    "Do not edit any file listed under frontend.immutablePaths."
+  ],
+  "nonGoals": [
+    "Changing the About section portrait image.",
+    "Modifying any backend logic.",
+    "Altering any other section outside the Hero."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": [
+      "Replace content entirely with the uploaded DJ Fizz logo PNG featuring neon green graffiti text, DJ turntable, and headphones on a transparent background (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png > dj-fizz-logo.dim_1200x600.png)"
+    ]
+  }
+}

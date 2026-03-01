@@ -1,0 +1,25 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-save-the-uploaded-image-0e4eb4a7-858b-4d8c-9f78-10efb5808419-png-as-the-new-dj-fizz-logo-static-asset-at-frontend-public-assets-generated-dj-fizz-logo-png-replacing-the-existing-file-then-update-the-img-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-img-1-in-frontend-src-components-hero-tsx-to-reference-assets-generated-dj-fizz-logo-png-ensure-the-image-container-and-any-parent-wrapper-elements-have-no-light-background-classes-no-bg-white-bg-gray-or-similar-so-the-logo-renders-cleanly-against-the-dark-hero-background-with-no-visible-checkerboard-artifact",
+      "featureTitle": "Save the uploaded image (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as the new DJ Fizz logo static asset at frontend/public/assets/generated/dj-fizz-logo.png, replacing the existing file. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-logo.png. Ensure the image container and any parent wrapper elements have no light background classes (no bg-white, bg-gray, or similar) so the logo renders cleanly against the dark hero background with no visible checkerboard artifact.",
+      "files": [
+        "frontend/src/components/Hero.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Replace Hero logo with newly uploaded DJ Fizz PNG",
+  "requirements": [
+    {
+      "id": "REQ-9",
+      "summary": "Replace the existing Hero logo with the newly uploaded DJ Fizz PNG and ensure clean transparent background rendering",
+      "acceptanceCriteria": [
+        "The newly uploaded PNG (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) is saved at frontend/public/assets/generated/dj-fizz-logo.png, overwriting the previous logo file.",
+        "The <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in Hero.tsx has its src set to /assets/generated/dj-fizz-logo.png.",
+        "No light background classes (bg-white, bg-gray, etc.) are present on the logo container or parent wrappers.",
+        "The new logo displays without a visible checkerboard transparent background pattern in the Hero section."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/dj-fizz-logo.png",
+          "operation": "create",
+          "description": "Save the uploaded image file (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as dj-fizz-logo.png, replacing any existing file at this path. This is the new DJ Fizz logo featuring neon green graffiti text, DJ turntable, and headphones on a transparent background."
+        },
+        {
+          "path": "frontend/src/components/Hero.tsx",
+          "operation": "modify",
+          "description": "Update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] to reference /assets/generated/dj-fizz-logo.png as its src attribute. Remove any light background classes (bg-white, bg-gray, bg-gray-50, bg-gray-100, etc.) from the image container div and any parent wrapper elements to prevent visible checkerboard artifacts on the transparent logo against the dark hero background. Preserve all other Hero section content, layout, animations, and styling."
+        }
+      ]
+    }
+  ]
+}

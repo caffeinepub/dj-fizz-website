@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 13,
+  "summary": "Building a modern, elegant DJ website for DJ Fizz. Color palette: black base with electric green accents and glow effects (matching the DJ Fizz logo). Full-width cinematic layout with smooth scrolling, fade-in animations, and stage lighting effects. Sections include: hero, about (with portrait photo), services (4-column), premium add-ons, testimonials, event gallery, SEO section, 'More Than Just Music' section, and a booking form. Booking form submissions stored in backend with an admin page for viewing. No flat prices — custom packages messaging. Targeting weddings, corporate events, school dances, and private parties in Raleigh, NC.",
+  "architectural_notes": [
+    "Color palette: black base with electric green accents and glow effects, matched to the DJ Fizz logo (no gold)",
+    "Booking form submissions stored in backend database; viewable via private admin page",
+    "No flat pricing displayed — use 'Custom Packages Built Around Your Vision' messaging"
+  ],
+  "known_issues": [
+    "Hero section PNG logo shows checkered background (transparent background indicator) — container background needs to be set to dark/transparent to match site theme"
+  ],
+  "isFixRequest": false,
+  "imageRequirements": "## Edit Images\n- Replace content entirely with the uploaded DJ Fizz logo PNG featuring neon green graffiti text, DJ turntable, and headphones on a transparent background (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png > dj-fizz-logo.dim_1200x600.png)",
+  "existing_features": [
+    {
+      "id": "feature-update-the-entire-site-color-palette-to-match-the-dj-fizz-logo-img-0756-png-deep-black-000000-0a0a0a-as-the-base-electric-neon-green-39ff14-or-closest-match-to-logo-green-as-the-primary-accent-color-for-buttons-glows-borders-highlights-and-interactive-elements-replace-any-gold-navy-accent-usage-with-this-green-glow-effects-on-buttons-cards-and-section-accents-should-use-a-green-radial-or-box-shadow-glow-consistent-with-the-logo-s-energy-style",
+      "title": "Update the entire site color palette to match the DJ Fizz logo (IMG_0756.png): deep black (#000000 / #0a0a0a) as the base, electric neon green (#39ff14 or closest match to logo green) as the primary accent color for buttons, glows, borders, highlights, and interactive elements. Replace any gold/navy accent usage with this green. Glow effects on buttons, cards, and section accents should use a green radial or box-shadow glow consistent with the logo's energy style.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-use-the-uploaded-photo-img-1534-jpeg-as-the-dj-fizz-professional-portrait-in-the-about-section-display-it-as-a-full-high-quality-portrait-image-with-a-subtle-green-glow-border-or-frame-treatment-consistent-with-the-site-s-neon-green-aesthetic-save-the-image-as-a-static-asset-at-frontend-public-assets-generated-dj-fizz-portrait-jpg-and-reference-it-from-the-about-section-component",
+      "title": "Use the uploaded photo (IMG_1534.jpeg) as the DJ Fizz professional portrait in the About section. Display it as a full, high-quality portrait image with a subtle green glow border or frame treatment consistent with the site's neon green aesthetic. Save the image as a static asset at frontend/public/assets/generated/dj-fizz-portrait.jpg and reference it from the About section component.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-private-admin-page-at-route-admin-that-displays-all-stored-booking-form-submissions-in-a-clean-readable-table-or-card-list-each-entry-should-show-name-email-phone-event-type-event-date-venue-guest-count-additional-details-and-submission-timestamp-style-the-admin-page-using-the-site-s-black-and-neon-green-palette-no-authentication-is-required-for-this-initial-version",
+      "title": "Create a private Admin page at route /admin that displays all stored booking form submissions in a clean, readable table or card list. Each entry should show: name, email, phone, event type, event date, venue, guest count, additional details, and submission timestamp. Style the admin page using the site's black and neon green palette. No authentication is required for this initial version.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-dj-fizz-portrait-image-in-the-about-section-so-it-displays-correctly-the-image-is-saved-at-frontend-public-assets-generated-dj-fizz-portrait-jpg-update-the-img-element-at-the-xpath-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-1-div-1-div-2-img-1-in-the-about-component-to-reference-the-correct-absolute-path-assets-generated-dj-fizz-portrait-jpg-relative-to-the-public-root-ensuring-the-src-attribute-resolves-properly-in-the-deployed-environment",
+      "title": "Fix the DJ Fizz portrait image in the About section so it displays correctly. The image is saved at frontend/public/assets/generated/dj-fizz-portrait.jpg. Update the <img> element at the XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[1]/div[1]/div[2]/img[1] in the About component to reference the correct absolute path /assets/generated/dj-fizz-portrait.jpg (relative to the public root), ensuring the src attribute resolves properly in the deployed environment.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-about-section-component-frontend-src-components-about-tsx-remove-the-six-selected-elements-identified-by-the-following-xpaths-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-1-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-2-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-3-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-1-div-1-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-2-div-1-and-html-1-body-1-div-1-div-1-main-1-section-2-div-2-div-2-div-2-div-2-div-3-div-1-these-elements-are-the-stat-counter-cards-and-their-inner-content-divs-in-the-about-section-delete-the-entire-stat-counter-group-container-and-all-its-children-from-the-component-jsx",
+      "title": "In the About section component (frontend/src/components/About.tsx), remove the six selected elements identified by the following XPaths: /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[1], /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[2], /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[3], /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[1]/div[1], /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[2]/div[1], and /html[1]/body[1]/div[1]/div[1]/main[1]/section[2]/div[2]/div[2]/div[2]/div[2]/div[3]/div[1]. These elements are the stat counter cards (and their inner content divs) in the About section. Delete the entire stat counter group container and all its children from the component JSX.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-hero-component-frontend-src-components-hero-tsx-update-the-img-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-img-1-to-reference-a-png-version-of-the-dj-fizz-logo-generate-a-new-png-version-of-the-existing-logo-image-and-save-it-as-a-static-asset-at-frontend-public-assets-generated-dj-fizz-logo-png-then-update-the-img-src-attribute-to-assets-generated-dj-fizz-logo-png",
+      "title": "In the Hero component (frontend/src/components/Hero.tsx), update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] to reference a PNG version of the DJ Fizz logo. Generate a new PNG version of the existing logo image and save it as a static asset at frontend/public/assets/generated/dj-fizz-logo.png, then update the img src attribute to /assets/generated/dj-fizz-logo.png.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-hero-component-frontend-src-components-hero-tsx-fix-the-dj-fizz-logo-png-image-so-the-checkered-transparent-background-pattern-no-longer-shows-ensure-the-image-container-and-any-parent-wrapper-elements-have-a-background-color-of-transparent-or-matching-the-site-s-dark-base-000000-0a0a0a-not-a-light-or-default-browser-background-remove-any-background-color-bg-white-bg-gray-or-similar-light-background-classes-from-the-logo-s-container-element-the-logo-should-render-cleanly-against-the-dark-hero-background-with-no-visible-checkerboard-artifact",
+      "title": "In the Hero component (frontend/src/components/Hero.tsx), fix the DJ Fizz logo PNG image so the checkered transparent background pattern no longer shows. Ensure the image container and any parent wrapper elements have a background color of transparent or matching the site's dark base (#000000 / #0a0a0a), not a light or default browser background. Remove any background-color, bg-white, bg-gray, or similar light background classes from the logo's container element. The logo should render cleanly against the dark hero background with no visible checkerboard artifact.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-save-the-uploaded-image-0e4eb4a7-858b-4d8c-9f78-10efb5808419-png-as-the-new-dj-fizz-logo-static-asset-at-frontend-public-assets-generated-dj-fizz-logo-png-replacing-the-existing-file-then-update-the-img-element-at-xpath-html-1-body-1-div-1-div-1-main-1-section-1-div-2-div-1-img-1-in-frontend-src-components-hero-tsx-to-reference-assets-generated-dj-fizz-logo-png-ensure-the-image-container-and-any-parent-wrapper-elements-have-no-light-background-classes-no-bg-white-bg-gray-or-similar-so-the-logo-renders-cleanly-against-the-dark-hero-background-with-no-visible-checkerboard-artifact",
+      "title": "Save the uploaded image (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png) as the new DJ Fizz logo static asset at frontend/public/assets/generated/dj-fizz-logo.png, replacing the existing file. Then update the <img> element at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[1]/div[2]/div[1]/img[1] in frontend/src/components/Hero.tsx to reference /assets/generated/dj-fizz-logo.png. Ensure the image container and any parent wrapper elements have no light background classes (no bg-white, bg-gray, or similar) so the logo renders cleanly against the dark hero background with no visible checkerboard artifact.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Cinematic hero section with headline 'Elevating Every Event.', subheadline, two CTA buttons, and animated stage lighting beams",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "About DJ Fizz section with professional portrait (uploaded photo), energetic bio copy, and signature-style name graphic",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "4-column services section (Weddings, Corporate Events, School Dances & Proms, Private Parties) with icons and Learn More buttons",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Premium add-ons section with glowing card designs (Dance Floor Lighting, Uplighting, Ceremony Audio, Wireless Mics, Monogram Projection)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "5 emotionally powerful testimonials covering professionalism, energy, sound clarity, communication, and crowd engagement",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Grid-style event gallery with hover animations (wedding, corporate, school dance, DJ booth images)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Local SEO section with naturally integrated Raleigh, NC DJ keywords",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Bold booking section with 8-field form, trust statement, and backend submission storage viewable on admin page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "'More Than Just Music' section highlighting timeline management, crowd reading, and planner coordination",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Admin page to view stored booking form submissions",
+      "reqIds": [
+        "AR-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Store booking form submissions in the Motoko backend. The backend actor must persist each submission with all 8 fields: name, email, phone, event type, event date, venue, estimated guest count, and additional details, along with a submission timestamp. Expose a query function to retrieve all stored submissions.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Replace the current DJ Fizz logo image in the Hero section with the newly uploaded PNG (0E4EB4A7-858B-4D8C-9F78-10EFB5808419.png), saving it as the new logo asset and updating the img src reference",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "DJ Fizz Website",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
