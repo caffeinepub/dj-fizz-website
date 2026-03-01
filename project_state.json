@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 31,
   "summary": "Building a modern, elegant DJ website for DJ Fizz. Color palette: black base with electric green accents and glow effects (matching the DJ Fizz logo). Full-width cinematic layout with smooth scrolling, fade-in animations, and stage lighting effects. Sections include: hero, about (with portrait photo), services (4-column), premium add-ons, testimonials, event gallery, SEO section, 'More Than Just Music' section, and a booking form. Booking form submissions stored in backend with an admin page for viewing. No flat prices — custom packages messaging. Targeting weddings, corporate events, school dances, and private parties in Raleigh, NC.",
   "architectural_notes": [
     "Color palette: black base with electric green accents and glow effects, matched to the DJ Fizz logo (no gold)",
@@ -9,7 +9,8 @@
   ],
   "known_issues": [
     "Gallery section content wrapper still visible after attempted removal — needs to be fully deleted from Gallery.tsx",
-    "Admin page shows authentication error blocking access — needs login gate removed so /admin is accessible without authentication"
+    "Admin page shows authentication error blocking access — needs login gate removed so /admin is accessible without authentication",
+    "Booking form submissions are intermittently failing (second submission returned failure message); admin page not displaying stored submissions"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -132,6 +133,38 @@
         "REQ-16"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-page-frontend-src-pages-adminpage-tsx-so-that-it-correctly-fetches-and-displays-all-stored-booking-submissions-from-the-backend-ensure-the-usegetallsubmissions-react-query-hook-in-frontend-src-hooks-usequeries-ts-calls-the-correct-backend-query-method-handles-the-returned-data-shape-properly-and-that-adminpage-tsx-renders-the-submissions-list-without-requiring-authentication-verify-the-actor-is-initialized-in-anonymous-mode-so-the-query-can-execute-on-page-load-without-login",
+      "title": "Fix the admin page (`frontend/src/pages/AdminPage.tsx`) so that it correctly fetches and displays all stored booking submissions from the backend. Ensure the `useGetAllSubmissions` React Query hook in `frontend/src/hooks/useQueries.ts` calls the correct backend query method, handles the returned data shape properly, and that `AdminPage.tsx` renders the submissions list without requiring authentication. Verify the actor is initialized in anonymous mode so the query can execute on page load without login.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rewrite-the-usegetallsubmissions-hook-in-frontend-src-hooks-usequeries-ts-to-call-the-correct-backend-query-method-getallsubmissions-using-an-anonymous-actor-no-authentication-required-ensure-the-hook-correctly-unpacks-the-returned-array-handles-both-empty-arrays-and-populated-arrays-and-does-not-depend-on-internet-identity-being-logged-in-the-query-should-run-automatically-on-page-load-with-no-manual-trigger",
+      "title": "Rewrite the `useGetAllSubmissions` hook in `frontend/src/hooks/useQueries.ts` to call the correct backend query method (`getAllSubmissions`) using an anonymous actor (no authentication required). Ensure the hook correctly unpacks the returned array, handles both empty arrays and populated arrays, and does not depend on Internet Identity being logged in. The query should run automatically on page load with no manual trigger.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-src-pages-adminpage-tsx-to-consume-the-fixed-usegetallsubmissions-hook-and-render-all-returned-submission-records-as-styled-cards-each-card-must-display-name-email-phone-event-type-event-date-venue-guest-count-additional-details-and-submission-timestamp-remove-any-remaining-authentication-check-or-login-gate-show-a-clear-empty-state-message-when-no-submissions-exist-show-a-loading-indicator-while-the-query-is-in-flight-show-an-error-message-if-the-query-fails",
+      "title": "Update `frontend/src/pages/AdminPage.tsx` to consume the fixed `useGetAllSubmissions` hook and render all returned submission records as styled cards. Each card must display: name, email, phone, event type, event date, venue, guest count, additional details, and submission timestamp. Remove any remaining authentication check or login gate. Show a clear empty-state message when no submissions exist. Show a loading indicator while the query is in flight. Show an error message if the query fails.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-frontend-src-components-bookingform-tsx-uses-the-usesubmitform-mutation-hook-correctly-and-displays-clear-success-and-error-feedback-after-submission-the-mutation-must-call-the-backend-submitbooking-function-with-all-8-fields-name-email-phone-eventtype-eventdate-venue-guestcount-additionaldetails-using-an-anonymous-actor-on-success-show-a-confirmation-message-and-reset-the-form-on-error-show-an-error-message-without-losing-the-entered-data",
+      "title": "Ensure `frontend/src/components/BookingForm.tsx` uses the `useSubmitForm` mutation hook correctly and displays clear success and error feedback after submission. The mutation must call the backend `submitBooking` function with all 8 fields (name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails) using an anonymous actor. On success, show a confirmation message and reset the form. On error, show an error message without losing the entered data.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -221,6 +254,28 @@
       "id": "AR-16",
       "summary": "Delete the section at XPath /html[1]/body[1]/div[1]/div[1]/main[1]/section[4]/div[2] (and nested element div[2]/div[2]/div[5]/div[2]) from the Gallery component",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Fix booking form submission reliability (intermittent failures) and fix admin page not displaying stored submissions correctly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Audit and fix the Motoko backend `submitBooking` (or equivalent) update function to ensure it reliably persists every booking form submission without intermittent failures. Verify that the stable storage structure (e.g., array or map of submissions) is correctly initialized and that the function always appends the new entry and returns a success result. Add defensive handling so that any unexpected runtime error is caught and a meaningful error variant is returned rather than a silent failure.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Audit and rewrite the Motoko backend `submitBooking` function in `backend/main.mo` to guarantee reliable persistence of every submission. Ensure the stable `submissions` Map (or equivalent stable structure) is correctly declared with `stable` keyword, properly initialized, and that `submitBooking` always appends the new entry with an auto-incremented ID and returns `#ok`. Add a `getAllSubmissions` public query function that returns all stored submissions as an array of records including id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, and submittedAt timestamp. Eliminate any pattern that could cause silent failures or state loss across canister upgrades.",
+      "reqIds": [
+        "REQ-19"
+      ],
       "status": "pending"
     }
   ],

@@ -1,12 +1,16 @@
-import List "mo:core/List";
 import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Iter "mo:core/Iter";
 import AccessControl "authorization/access-control";
+import Nat "mo:core/Nat";
+import Migration "migration";
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 
+// Specify migration function in the with clause for automatic state upgrade.
+(with migration = Migration.run)
 actor {
   include MixinStorage();
 
@@ -40,7 +44,7 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  type BookingForm = {
+  public type BookingForm = {
     name : Text;
     email : Text;
     phone : Text;
@@ -49,22 +53,26 @@ actor {
     venue : Text;
     guestCount : Nat;
     additionalDetails : Text;
+    submittedAt : Time.Time;
+  };
+
+  public type BookingSubmission = {
+    id : Nat;
+    booking : BookingForm;
     timestamp : Time.Time;
   };
 
-  let submissions = List.empty<BookingForm>();
+  type SubmissionResult = {
+    #ok : Nat;
+    #error : Text;
+  };
 
-  public shared ({ caller }) func submitForm(
-    name : Text,
-    email : Text,
-    phone : Text,
-    eventType : Text,
-    eventDate : Text,
-    venue : Text,
-    guestCount : Nat,
-    additionalDetails : Text,
-  ) : async () {
-    let submission : BookingForm = {
+  stable var lastSubmissionId = 0;
+  stable var submissions : Map.Map<Nat, BookingSubmission> = Map.empty<Nat, BookingSubmission>();
+
+  // Open to all callers including guests — no authorization check needed.
+  public shared ({ caller }) func submitBooking(name : Text, email : Text, phone : Text, eventType : Text, eventDate : Text, venue : Text, guestCount : Nat, additionalDetails : Text) : async SubmissionResult {
+    let newBooking : BookingForm = {
       name;
       email;
       phone;
@@ -73,15 +81,26 @@ actor {
       venue;
       guestCount;
       additionalDetails;
+      submittedAt = Time.now();
+    };
+
+    let submissionId = lastSubmissionId;
+    let newSubmission : BookingSubmission = {
+      id = submissionId;
+      booking = newBooking;
       timestamp = Time.now();
     };
-    submissions.add(submission);
+
+    submissions.add(submissionId, newSubmission);
+    lastSubmissionId += 1;
+    #ok(submissionId);
   };
 
-  public query ({ caller }) func getAllSubmissions() : async [BookingForm] {
+  // Admin-only: returns all customer submissions which contain sensitive data.
+  public query ({ caller }) func getAllSubmissions() : async [BookingSubmission] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can view all submissions");
     };
-    submissions.toArray();
+    submissions.values().toArray();
   };
 };

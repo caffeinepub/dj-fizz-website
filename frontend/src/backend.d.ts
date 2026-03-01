@@ -7,20 +7,32 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export type Time = bigint;
-export interface UserProfile {
-    name: string;
-}
 export interface BookingForm {
     additionalDetails: string;
     venue: string;
     guestCount: bigint;
     name: string;
+    submittedAt: Time;
     email: string;
-    timestamp: Time;
     phone: string;
     eventDate: string;
     eventType: string;
+}
+export type Time = bigint;
+export interface BookingSubmission {
+    id: bigint;
+    booking: BookingForm;
+    timestamp: Time;
+}
+export type SubmissionResult = {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "error";
+    error: string;
+};
+export interface UserProfile {
+    name: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -29,11 +41,11 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    getAllSubmissions(): Promise<Array<BookingForm>>;
+    getAllSubmissions(): Promise<Array<BookingSubmission>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    submitForm(name: string, email: string, phone: string, eventType: string, eventDate: string, venue: string, guestCount: bigint, additionalDetails: string): Promise<void>;
+    submitBooking(name: string, email: string, phone: string, eventType: string, eventDate: string, venue: string, guestCount: bigint, additionalDetails: string): Promise<SubmissionResult>;
 }

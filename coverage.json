@@ -1,18 +1,36 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T21:12:14.160Z",
+  "generatedAt": "2026-03-01T21:31:51.023Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-16",
-        "summary": "In frontend/src/pages/AdminPage.tsx, remove the authentication check and any login gate that blocks access to the page. The /admin route must be fully accessible without any login or identity verification — remove any conditional rendering that shows an 'admin access required' or 'please log in' error message, and ensure all booking submissions are fetched and displayed immediately when the page loads without requiring authentication.",
+        "id": "REQ-19",
+        "summary": "Audit and rewrite the Motoko backend `submitBooking` function in `backend/main.mo` to guarantee reliable persistence of every submission. Ensure the stable `submissions` Map (or equivalent stable structure) is correctly declared with `stable` keyword, properly initialized, and that `submitBooking` always appends the new entry with an auto-incremented ID and returns `#ok`. Add a `getAllSubmissions` public query function that returns all stored submissions as an array of records including id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, and submittedAt timestamp. Eliminate any pattern that could cause silent failures or state loss across canister upgrades.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Rewrite the `useGetAllSubmissions` hook in `frontend/src/hooks/useQueries.ts` to call the correct backend query method (`getAllSubmissions`) using an anonymous actor (no authentication required). Ensure the hook correctly unpacks the returned array, handles both empty arrays and populated arrays, and does not depend on Internet Identity being logged in. The query should run automatically on page load with no manual trigger.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-21",
+        "summary": "Update `frontend/src/pages/AdminPage.tsx` to consume the fixed `useGetAllSubmissions` hook and render all returned submission records as styled cards. Each card must display: name, email, phone, event type, event date, venue, guest count, additional details, and submission timestamp. Remove any remaining authentication check or login gate. Show a clear empty-state message when no submissions exist. Show a loading indicator while the query is in flight. Show an error message if the query fails.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/AdminPage.tsx"
@@ -20,14 +38,33 @@
         "matchedFiles": [
           "frontend/src/pages/AdminPage.tsx"
         ]
+      },
+      {
+        "id": "REQ-22",
+        "summary": "Ensure `frontend/src/components/BookingForm.tsx` uses the `useSubmitForm` mutation hook correctly and displays clear success and error feedback after submission. The mutation must call the backend `submitBooking` function with all 8 fields (name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails) using an anonymous actor. On success, show a confirmation message and reset the form. On error, show an error message without losing the entered data.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/BookingForm.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/AdminPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",

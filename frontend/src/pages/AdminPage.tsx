@@ -1,8 +1,21 @@
 import { useGetAllSubmissions } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
-import { Loader2, Inbox, Calendar, Users, MapPin, Mail, Phone, FileText, Clock, LogIn, LogOut } from 'lucide-react';
-import type { BookingForm } from '../backend';
+import {
+  Loader2,
+  Inbox,
+  Calendar,
+  Users,
+  MapPin,
+  Mail,
+  Phone,
+  FileText,
+  Clock,
+  LogOut,
+  RefreshCw,
+  LogIn,
+} from 'lucide-react';
+import type { BookingSubmission } from '../backend';
 
 function formatTimestamp(ts: bigint): string {
   // Motoko Time.now() returns nanoseconds
@@ -16,13 +29,18 @@ function formatTimestamp(ts: bigint): string {
   });
 }
 
-function SubmissionCard({ submission }: { submission: BookingForm }) {
+function SubmissionCard({ submission }: { submission: BookingSubmission }) {
+  const { booking, id, timestamp } = submission;
+
   return (
     <div className="glass-card rounded-sm p-6 hover:border-neon-green/30 transition-all duration-200">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
         <div>
-          <h3 className="font-display text-2xl text-white tracking-wider">{submission.name.toUpperCase()}</h3>
+          <div className="flex items-center gap-3 mb-1">
+            <span className="text-white/30 text-xs font-mono">#{id.toString()}</span>
+            <h3 className="font-display text-2xl text-white tracking-wider">{booking.name.toUpperCase()}</h3>
+          </div>
           <span
             className="inline-block mt-1 px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-sm"
             style={{
@@ -31,12 +49,12 @@ function SubmissionCard({ submission }: { submission: BookingForm }) {
               color: '#39ff14',
             }}
           >
-            {submission.eventType}
+            {booking.eventType}
           </span>
         </div>
         <div className="flex items-center gap-2 text-white/40 text-xs">
           <Clock size={12} />
-          <span>{formatTimestamp(submission.timestamp)}</span>
+          <span>{formatTimestamp(timestamp)}</span>
         </div>
       </div>
 
@@ -46,47 +64,54 @@ function SubmissionCard({ submission }: { submission: BookingForm }) {
           <Mail size={14} className="text-neon-green/60 flex-shrink-0" />
           <div>
             <p className="text-white/30 text-xs uppercase tracking-wider">Email</p>
-            <p className="text-white/80 text-sm">{submission.email}</p>
+            <p className="text-white/80 text-sm">{booking.email}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Phone size={14} className="text-neon-green/60 flex-shrink-0" />
           <div>
             <p className="text-white/30 text-xs uppercase tracking-wider">Phone</p>
-            <p className="text-white/80 text-sm">{submission.phone}</p>
+            <p className="text-white/80 text-sm">{booking.phone}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Calendar size={14} className="text-neon-green/60 flex-shrink-0" />
           <div>
             <p className="text-white/30 text-xs uppercase tracking-wider">Event Date</p>
-            <p className="text-white/80 text-sm">{submission.eventDate || '—'}</p>
+            <p className="text-white/80 text-sm">{booking.eventDate || '—'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <MapPin size={14} className="text-neon-green/60 flex-shrink-0" />
           <div>
             <p className="text-white/30 text-xs uppercase tracking-wider">Venue</p>
-            <p className="text-white/80 text-sm">{submission.venue || '—'}</p>
+            <p className="text-white/80 text-sm">{booking.venue || '—'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Users size={14} className="text-neon-green/60 flex-shrink-0" />
           <div>
             <p className="text-white/30 text-xs uppercase tracking-wider">Guest Count</p>
-            <p className="text-white/80 text-sm">{submission.guestCount.toString()}</p>
+            <p className="text-white/80 text-sm">{booking.guestCount.toString()}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Clock size={14} className="text-neon-green/60 flex-shrink-0" />
+          <div>
+            <p className="text-white/30 text-xs uppercase tracking-wider">Submitted At</p>
+            <p className="text-white/80 text-sm">{formatTimestamp(booking.submittedAt)}</p>
           </div>
         </div>
       </div>
 
       {/* Additional details */}
-      {submission.additionalDetails && (
+      {booking.additionalDetails && (
         <div className="border-t border-neon-green/10 pt-4 mt-4">
           <div className="flex items-start gap-3">
             <FileText size={14} className="text-neon-green/60 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Additional Details</p>
-              <p className="text-white/65 text-sm leading-relaxed">{submission.additionalDetails}</p>
+              <p className="text-white/65 text-sm leading-relaxed">{booking.additionalDetails}</p>
             </div>
           </div>
         </div>
@@ -96,25 +121,32 @@ function SubmissionCard({ submission }: { submission: BookingForm }) {
 }
 
 export default function AdminPage() {
-  const { identity, login, clear, loginStatus, isInitializing } = useInternetIdentity();
+  const { identity, login, clear, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
   const isLoggingIn = loginStatus === 'logging-in';
 
-  const { data: submissions, isLoading, isError } = useGetAllSubmissions();
-
-  const handleLogin = async () => {
-    try {
-      await login();
-    } catch (error: any) {
-      console.error('Login error:', error);
-    }
-  };
+  const { data: submissions, isLoading, isError, error, refetch, isFetching } = useGetAllSubmissions();
 
   const handleLogout = async () => {
     await clear();
     queryClient.clear();
   };
+
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (err: unknown) {
+      console.error('Login error:', err);
+    }
+  };
+
+  // Determine if the error is an auth error
+  const isAuthError =
+    isError &&
+    error instanceof Error &&
+    (error.message.toLowerCase().includes('unauthorized') ||
+      error.message.toLowerCase().includes('only admin'));
 
   return (
     <main className="min-h-screen bg-djblack pt-24 pb-16">
@@ -148,6 +180,18 @@ export default function AdminPage() {
               )}
               {isAuthenticated && (
                 <button
+                  onClick={() => refetch()}
+                  disabled={isFetching}
+                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors disabled:opacity-40"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                  title="Refresh submissions"
+                >
+                  <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />
+                  Refresh
+                </button>
+              )}
+              {isAuthenticated ? (
+                <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors"
                   style={{ border: '1px solid rgba(255,255,255,0.1)' }}
@@ -155,64 +199,65 @@ export default function AdminPage() {
                   <LogOut size={14} />
                   Logout
                 </button>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  disabled={isLoggingIn}
+                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-widest uppercase transition-colors disabled:opacity-40"
+                  style={{
+                    background: 'rgba(57,255,20,0.08)',
+                    border: '1px solid rgba(57,255,20,0.3)',
+                    color: '#39ff14',
+                  }}
+                >
+                  {isLoggingIn ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <LogIn size={14} />
+                  )}
+                  {isLoggingIn ? 'Logging in...' : 'Admin Login'}
+                </button>
               )}
             </div>
           </div>
           <div className="section-divider mt-8" />
         </div>
 
-        {/* Not authenticated — show login prompt */}
-        {!isInitializing && !isAuthenticated && (
-          <div
-            className="rounded-sm p-10 text-center"
-            style={{
-              background: 'rgba(57,255,20,0.04)',
-              border: '1px solid rgba(57,255,20,0.15)',
-            }}
-          >
+        {/* Not authenticated — prompt login */}
+        {!isAuthenticated && !isLoading && (
+          <div className="flex flex-col items-center justify-center py-24 gap-6">
             <div
-              className="w-16 h-16 rounded-sm flex items-center justify-center mx-auto mb-6"
+              className="w-20 h-20 rounded-sm flex items-center justify-center"
               style={{
-                background: 'rgba(57,255,20,0.08)',
-                border: '1px solid rgba(57,255,20,0.2)',
+                background: 'rgba(57,255,20,0.05)',
+                border: '1px solid rgba(57,255,20,0.15)',
               }}
             >
-              <LogIn size={28} className="text-neon-green" />
+              <LogIn size={36} className="text-neon-green/40" />
             </div>
-            <p className="font-display text-2xl text-white tracking-wider mb-2">ADMIN LOGIN REQUIRED</p>
-            <p className="text-white/40 text-sm mb-8 max-w-sm mx-auto">
-              Sign in with your admin account to view booking submissions.
-            </p>
-            <button
-              onClick={handleLogin}
-              disabled={isLoggingIn}
-              className="inline-flex items-center gap-3 px-8 py-3 font-semibold text-sm tracking-widest uppercase rounded-sm transition-all duration-200 disabled:opacity-50"
-              style={{
-                background: isLoggingIn ? 'rgba(57,255,20,0.1)' : 'rgba(57,255,20,0.15)',
-                border: '1px solid rgba(57,255,20,0.4)',
-                color: '#39ff14',
-              }}
-            >
-              {isLoggingIn ? (
-                <>
+            <div className="text-center">
+              <p className="text-white/60 font-semibold text-lg mb-2">Admin access required</p>
+              <p className="text-white/30 text-sm mb-6">
+                Please log in with your admin account to view booking submissions.
+              </p>
+              <button
+                onClick={handleLogin}
+                disabled={isLoggingIn}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-sm text-sm font-semibold tracking-widest uppercase transition-all duration-200 disabled:opacity-40"
+                style={{
+                  background: 'rgba(57,255,20,0.1)',
+                  border: '1px solid rgba(57,255,20,0.4)',
+                  color: '#39ff14',
+                }}
+              >
+                {isLoggingIn ? (
                   <Loader2 size={16} className="animate-spin" />
-                  Signing In...
-                </>
-              ) : (
-                <>
+                ) : (
                   <LogIn size={16} />
-                  Sign In
-                </>
-              )}
-            </button>
-          </div>
-        )}
-
-        {/* Initializing */}
-        {isInitializing && (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <Loader2 size={40} className="text-neon-green animate-spin" />
-            <p className="text-white/40 text-sm tracking-widest uppercase">Initializing...</p>
+                )}
+                {isLoggingIn ? 'Logging in...' : 'Login as Admin'}
+              </button>
+            </div>
           </div>
         )}
 
@@ -224,8 +269,36 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Error fetching submissions */}
-        {isAuthenticated && isError && (
+        {/* Auth error */}
+        {isAuthenticated && !isLoading && isAuthError && (
+          <div
+            className="rounded-sm p-8 text-center"
+            style={{
+              background: 'rgba(255,165,0,0.05)',
+              border: '1px solid rgba(255,165,0,0.2)',
+            }}
+          >
+            <p className="text-orange-400 font-semibold mb-2">Access Denied</p>
+            <p className="text-white/40 text-sm mb-4">
+              Your account does not have admin privileges to view submissions.
+            </p>
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-sm text-xs tracking-widest uppercase transition-colors"
+              style={{
+                background: 'rgba(255,165,0,0.1)',
+                border: '1px solid rgba(255,165,0,0.3)',
+                color: 'rgb(251,191,36)',
+              }}
+            >
+              <LogOut size={14} />
+              Logout &amp; Try Another Account
+            </button>
+          </div>
+        )}
+
+        {/* General error fetching submissions */}
+        {isAuthenticated && !isLoading && isError && !isAuthError && (
           <div
             className="rounded-sm p-8 text-center"
             style={{
@@ -234,9 +307,21 @@ export default function AdminPage() {
             }}
           >
             <p className="text-red-400 font-semibold mb-2">Unable to load submissions</p>
-            <p className="text-white/40 text-sm">
-              Your account may not have admin privileges. Please contact the site owner.
+            <p className="text-white/40 text-sm mb-4">
+              There was an error fetching the booking submissions. Please try again.
             </p>
+            <button
+              onClick={() => refetch()}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-sm text-xs tracking-widest uppercase transition-colors"
+              style={{
+                background: 'rgba(255,50,50,0.1)',
+                border: '1px solid rgba(255,50,50,0.3)',
+                color: 'rgb(248,113,113)',
+              }}
+            >
+              <RefreshCw size={14} />
+              Try Again
+            </button>
           </div>
         )}
 
@@ -264,8 +349,8 @@ export default function AdminPage() {
         {/* Submissions list */}
         {isAuthenticated && !isLoading && !isError && submissions && submissions.length > 0 && (
           <div className="space-y-6">
-            {[...submissions].reverse().map((submission, index) => (
-              <SubmissionCard key={index} submission={submission} />
+            {[...submissions].reverse().map((submission) => (
+              <SubmissionCard key={submission.id.toString()} submission={submission} />
             ))}
           </div>
         )}

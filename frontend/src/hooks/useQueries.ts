@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { BookingForm } from '../backend';
+import type { BookingSubmission } from '../backend';
 
 export function useGetAllSubmissions() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<BookingForm[]>({
+  return useQuery<BookingSubmission[]>({
     queryKey: ['allSubmissions'],
     queryFn: async () => {
       if (!actor) return [];
@@ -33,7 +33,7 @@ export function useSubmitForm() {
   return useMutation({
     mutationFn: async (data: BookingFormInput) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.submitForm(
+      const result = await actor.submitBooking(
         data.name,
         data.email,
         data.phone,
@@ -43,6 +43,10 @@ export function useSubmitForm() {
         BigInt(data.guestCount),
         data.additionalDetails
       );
+      if (result.__kind__ === 'error') {
+        throw new Error(result.error || 'Submission failed. Please try again.');
+      }
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allSubmissions'] });

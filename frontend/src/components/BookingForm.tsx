@@ -12,19 +12,21 @@ const eventTypes = [
   'Other',
 ];
 
-export default function BookingForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    eventType: '',
-    eventDate: '',
-    venue: '',
-    guestCount: '',
-    additionalDetails: '',
-  });
+const emptyForm = {
+  name: '',
+  email: '',
+  phone: '',
+  eventType: '',
+  eventDate: '',
+  venue: '',
+  guestCount: '',
+  additionalDetails: '',
+};
 
-  const { mutate, isPending, isSuccess, isError, error } = useSubmitForm();
+export default function BookingForm() {
+  const [formData, setFormData] = useState(emptyForm);
+
+  const { mutate, isPending, isSuccess, isError, error, reset } = useSubmitForm();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,6 +46,11 @@ export default function BookingForm() {
     });
   };
 
+  const handleSubmitAnother = () => {
+    setFormData(emptyForm);
+    reset();
+  };
+
   const inputClass =
     'w-full bg-djblack-mid border border-neon-green/20 text-white placeholder-white/30 rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-neon-green/60 focus:shadow-neon-sm transition-all duration-200';
   const labelClass = 'block text-white/60 text-xs font-semibold tracking-widest uppercase mb-2';
@@ -60,9 +67,20 @@ export default function BookingForm() {
             <p className="text-white/70 text-lg mb-6">
               Thank you for reaching out. DJ Fizz will review your event details and respond within 24 hours.
             </p>
-            <p className="text-neon-green text-sm font-semibold tracking-widest uppercase">
+            <p className="text-neon-green text-sm font-semibold tracking-widest uppercase mb-8">
               Let's make your event unforgettable.
             </p>
+            <button
+              onClick={handleSubmitAnother}
+              className="inline-flex items-center gap-2 px-6 py-3 text-xs font-semibold tracking-widest uppercase rounded-sm transition-all duration-200"
+              style={{
+                background: 'rgba(57,255,20,0.08)',
+                border: '1px solid rgba(57,255,20,0.25)',
+                color: 'rgba(255,255,255,0.5)',
+              }}
+            >
+              Submit Another Inquiry
+            </button>
           </div>
         </div>
       </section>
@@ -168,13 +186,14 @@ export default function BookingForm() {
               />
             </div>
             <div>
-              <label className={labelClass}>Venue</label>
+              <label className={labelClass}>Venue / Location *</label>
               <input
                 type="text"
                 name="venue"
+                required
                 value={formData.venue}
                 onChange={handleChange}
-                placeholder="Venue name or location"
+                placeholder="Venue name or address"
                 className={inputClass}
               />
             </div>
@@ -182,10 +201,11 @@ export default function BookingForm() {
 
           {/* Row 4: Guest Count */}
           <div>
-            <label className={labelClass}>Estimated Guest Count</label>
+            <label className={labelClass}>Expected Guest Count *</label>
             <input
               type="number"
               name="guestCount"
+              required
               min="1"
               value={formData.guestCount}
               onChange={handleChange}
@@ -199,45 +219,59 @@ export default function BookingForm() {
             <label className={labelClass}>Additional Details</label>
             <textarea
               name="additionalDetails"
-              rows={4}
               value={formData.additionalDetails}
               onChange={handleChange}
-              placeholder="Tell me about your vision, special requests, or anything else I should know..."
+              placeholder="Tell me more about your vision, music preferences, special requests..."
+              rows={4}
               className={`${inputClass} resize-none`}
             />
           </div>
 
-          {/* Error */}
+          {/* Error message */}
           {isError && (
-            <div className="flex items-center gap-3 p-4 rounded-sm bg-red-900/20 border border-red-500/30">
-              <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">
-                Something went wrong. Please try again or contact directly.
-              </p>
+            <div
+              className="flex items-start gap-3 rounded-sm p-4"
+              style={{
+                background: 'rgba(255,50,50,0.08)',
+                border: '1px solid rgba(255,50,50,0.25)',
+              }}
+            >
+              <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-red-400 text-sm font-semibold">Submission failed</p>
+                <p className="text-white/50 text-xs mt-1">
+                  {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
+                </p>
+              </div>
             </div>
           )}
 
-          {/* Submit */}
-          <div className="pt-2">
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full py-4 bg-neon-green text-djblack font-bold text-sm tracking-widest uppercase rounded-sm hover:bg-neon-green-dim transition-all duration-300 shadow-neon hover:shadow-neon-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send My Inquiry'
-              )}
-            </button>
-          </div>
+          {/* Submit button */}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full py-4 font-display text-xl tracking-widest uppercase rounded-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              background: isPending
+                ? 'rgba(57,255,20,0.15)'
+                : 'linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(57,255,20,0.1) 100%)',
+              border: '1px solid rgba(57,255,20,0.4)',
+              color: '#39ff14',
+              boxShadow: isPending ? 'none' : '0 0 20px rgba(57,255,20,0.15)',
+            }}
+          >
+            {isPending ? (
+              <span className="flex items-center justify-center gap-3">
+                <Loader2 size={20} className="animate-spin" />
+                Sending...
+              </span>
+            ) : (
+              "Let's Do This"
+            )}
+          </button>
 
-          {/* Trust statement */}
-          <p className="text-center text-white/40 text-xs tracking-wide">
-            ✓ All inquiries receive a response within 24 hours.
+          <p className="text-center text-white/25 text-xs tracking-wider">
+            Your information is secure and will only be used to respond to your inquiry.
           </p>
         </form>
       </div>

@@ -15,12 +15,19 @@ export interface BookingForm {
   'venue' : string,
   'guestCount' : bigint,
   'name' : string,
+  'submittedAt' : Time,
   'email' : string,
-  'timestamp' : Time,
   'phone' : string,
   'eventDate' : string,
   'eventType' : string,
 }
+export interface BookingSubmission {
+  'id' : bigint,
+  'booking' : BookingForm,
+  'timestamp' : Time,
+}
+export type SubmissionResult = { 'ok' : bigint } |
+  { 'error' : string };
 export type Time = bigint;
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
@@ -55,15 +62,15 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'getAllSubmissions' : ActorMethod<[], Array<BookingForm>>,
+  'getAllSubmissions' : ActorMethod<[], Array<BookingSubmission>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'submitForm' : ActorMethod<
+  'submitBooking' : ActorMethod<
     [string, string, string, string, string, string, bigint, string],
-    undefined
+    SubmissionResult
   >,
 }
 export declare const idlService: IDL.ServiceClass;

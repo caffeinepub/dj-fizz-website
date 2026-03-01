@@ -1,22 +1,65 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove authentication gate from Admin page",
+  "title": "Fix booking submissions end-to-end: frontend query hook and admin display",
   "requirements": [
     {
-      "id": "REQ-16",
-      "summary": "Remove all authentication checks and login gates from the Admin page, making it publicly accessible without requiring Internet Identity login",
+      "id": "REQ-20",
+      "summary": "Rewrite useGetAllSubmissions hook to call getAllSubmissions backend query using anonymous actor",
       "acceptanceCriteria": [
-        "Navigating to /admin displays booking submissions without any login prompt or error message",
-        "No 'admin access required' or 'please log in' message is shown at any point on the Admin page",
-        "All stored booking form submissions are fetched and rendered on page load without requiring Internet Identity authentication",
-        "The Admin page retains its black and neon green styling"
+        "useGetAllSubmissions calls actor.getAllSubmissions() using an anonymous actor",
+        "The hook runs automatically on mount without requiring login",
+        "Returned data is correctly typed and mapped to the submission record shape",
+        "Empty array is handled gracefully (shows empty state, no crash)",
+        "Populated array is surfaced to the component as an array of submission objects"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Rewrite useGetAllSubmissions hook to call the backend getAllSubmissions query method using an anonymous actor (no authentication required). Ensure the hook returns typed BookingSubmission[] data from backend.d.ts, runs automatically on mount, handles empty arrays gracefully, and does not depend on Internet Identity login status. The query should be enabled immediately and use queryKey ['allSubmissions']."
+        }
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "summary": "Update AdminPage to consume useGetAllSubmissions hook and render all submission records as styled cards",
+      "acceptanceCriteria": [
+        "Admin page at /admin loads immediately without any login prompt or auth gate",
+        "All stored booking submissions are displayed as cards with all 9 fields visible",
+        "A loading spinner or skeleton is shown while submissions are being fetched",
+        "An error message is displayed if the fetch fails",
+        "An empty-state message is shown when there are no submissions",
+        "Page styling matches the site's black and neon green palette"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/AdminPage.tsx",
           "operation": "modify",
-          "description": "Remove the authentication check conditional rendering that displays 'You may need admin access to view booking submissions. Please ensure you are logged in as an admin.' Remove any dependency on useInternetIdentity hook or identity state checks. Ensure the page directly renders the booking submissions list without any authentication gates. Keep the existing black and neon green styling, loading states, and error handling for the data fetch itself."
+          "description": "Update AdminPage to consume the fixed useGetAllSubmissions hook and render all returned BookingSubmission records as styled cards. Each card must display all 9 fields: id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, and submittedAt timestamp. Remove any authentication checks or login gates entirely. Show a loading spinner (using shadcn/ui components) while the query is in flight. Show a clear error message if the query fails. Show an empty-state message when no submissions exist. Apply glassmorphism card styling consistent with the site's black and neon green (#39FF14) theme from tailwind.config.js. Keep the existing logout and refresh controls but ensure the page loads all data without requiring login."
+        }
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "summary": "Ensure BookingForm uses useSubmitForm mutation correctly with clear success and error feedback",
+      "acceptanceCriteria": [
+        "Submitting the booking form calls submitBooking on the backend with all 8 fields",
+        "A success confirmation message is displayed after a successful submission",
+        "The form resets after a successful submission",
+        "An error message is displayed if the submission fails, preserving form data",
+        "The mutation uses an anonymous actor so no login is required to submit"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Verify and ensure useSubmitForm mutation hook calls backend submitBooking with all 8 required fields (name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails) using an anonymous actor. The mutation should handle the SubmissionResult return type from backend.d.ts correctly, exposing success/error states to the component. Ensure no authentication is required for form submission."
+        },
+        {
+          "path": "frontend/src/components/BookingForm.tsx",
+          "operation": "modify",
+          "description": "Ensure BookingForm correctly uses the useSubmitForm mutation hook and displays clear success and error feedback after submission. On successful submission (mutation.isSuccess), show a confirmation message (using alert, toast, or inline message) and reset the form fields. On error (mutation.isError), display an error message without losing the entered data. Ensure all 8 fields are passed to the mutation: name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails. The submission must work without requiring Internet Identity login."
         }
       ]
     }

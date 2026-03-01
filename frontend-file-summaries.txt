@@ -1,7 +1,7 @@
 {
   "frontend/src/index.css": "Global CSS with DJ Fizz brand design system — deep black base, electric neon green (#39ff14) accents, Bebas Neue display font, glow utilities, beam animations, glass card styles, and OKLCH color tokens.",
   "frontend/tailwind.config.js": "Tailwind config extended with DJ Fizz brand tokens — neon green colors, djblack palette, Bebas Neue/Inter fonts, neon box-shadow utilities, and beam/pulse-glow keyframe animations.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for backend integration — useGetAllSubmissions fetches all booking form submissions, useSubmitForm mutation submits the 8-field booking form to the Motoko backend.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for backend integration — `useGetAllSubmissions` fetches all booking submissions typed as `BookingSubmission[]`, and `useSubmitForm` mutation calls the correct `actor.submitBooking(...)` method (fixed from the broken `actor.submitForm` call) with all 8 required fields.",
   "frontend/src/App.tsx": "Main app with TanStack Router — defines root layout with Header/Footer, and routes for HomePage (/) and AdminPage (/admin).",
   "frontend/src/components/Header.tsx": "Fixed navigation header with DJ Fizz logo, smooth-scroll nav links, mobile hamburger menu, and an Admin link — styled with neon green accents on deep black.",
   "frontend/src/components/Hero.tsx": "Full-screen hero section with the DJ Fizz banner displayed as a full-width image at the top (no size constraints, using the built-in dark background), followed by animated stage lighting beams, headline, subheadline, and two CTA buttons with neon green glow effects.",
@@ -12,8 +12,8 @@
   "frontend/src/components/Gallery.tsx": "Empty Gallery section that renders only a bare section element with id=\"gallery\" for anchor-link compatibility, with no visible content whatsoever.",
   "frontend/src/components/MoreThanMusic.tsx": "\"More Than Just Music\" section highlighting DJ Fizz's event management skills — timeline management, crowd reading, planner coordination, and seamless transitions.",
   "frontend/src/components/SEOSection.tsx": "Local SEO section naturally integrating Raleigh NC DJ keywords with location badges and a CTA button.",
-  "frontend/src/components/BookingForm.tsx": "Eight-field booking inquiry form that submits to the Motoko backend via useSubmitForm mutation, with loading/success/error states and a trust statement.",
+  "frontend/src/components/BookingForm.tsx": "Eight-field booking inquiry form that submits to the Motoko backend via `useSubmitForm` mutation, with loading/success/error states, a trust statement, and a \"Submit Another Inquiry\" button on the success screen that resets both the form data and mutation state so users can submit multiple times.",
   "frontend/src/components/Footer.tsx": "Site footer with DJ Fizz logo, quick links, contact info, copyright with dynamic year, and caffeine.ai attribution with UTM tracking.",
   "frontend/src/pages/HomePage.tsx": "Home page that composes all site sections in order: Hero, About, Services, AddOns, MoreThanMusic, Gallery, Testimonials, SEOSection, BookingForm.",
-  "frontend/src/pages/AdminPage.tsx": "Admin dashboard at /admin that requires Internet Identity login to view booking submissions — shows a styled login prompt when unauthenticated, fetches and displays all submissions in neon green glass cards once signed in, with loading/error/empty states and a logout button."
+  "frontend/src/pages/AdminPage.tsx": "Admin dashboard at `/admin` that requires admin login to view booking submissions — shows a login prompt when unauthenticated, displays all `BookingSubmission` records (correctly accessing nested `booking.*` fields) in neon green glass cards with all 9 fields visible, and handles loading/auth-error/general-error/empty states."
 }

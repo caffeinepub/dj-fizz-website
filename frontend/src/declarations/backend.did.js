@@ -30,13 +30,22 @@ export const BookingForm = IDL.Record({
   'venue' : IDL.Text,
   'guestCount' : IDL.Nat,
   'name' : IDL.Text,
+  'submittedAt' : Time,
   'email' : IDL.Text,
-  'timestamp' : Time,
   'phone' : IDL.Text,
   'eventDate' : IDL.Text,
   'eventType' : IDL.Text,
 });
+export const BookingSubmission = IDL.Record({
+  'id' : IDL.Nat,
+  'booking' : BookingForm,
+  'timestamp' : Time,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const SubmissionResult = IDL.Variant({
+  'ok' : IDL.Nat,
+  'error' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -67,7 +76,7 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookingForm)], ['query']),
+  'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookingSubmission)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getUserProfile' : IDL.Func(
@@ -77,7 +86,7 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'submitForm' : IDL.Func(
+  'submitBooking' : IDL.Func(
       [
         IDL.Text,
         IDL.Text,
@@ -88,7 +97,7 @@ export const idlService = IDL.Service({
         IDL.Nat,
         IDL.Text,
       ],
-      [],
+      [SubmissionResult],
       [],
     ),
 });
@@ -118,13 +127,19 @@ export const idlFactory = ({ IDL }) => {
     'venue' : IDL.Text,
     'guestCount' : IDL.Nat,
     'name' : IDL.Text,
+    'submittedAt' : Time,
     'email' : IDL.Text,
-    'timestamp' : Time,
     'phone' : IDL.Text,
     'eventDate' : IDL.Text,
     'eventType' : IDL.Text,
   });
+  const BookingSubmission = IDL.Record({
+    'id' : IDL.Nat,
+    'booking' : BookingForm,
+    'timestamp' : Time,
+  });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const SubmissionResult = IDL.Variant({ 'ok' : IDL.Nat, 'error' : IDL.Text });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -155,7 +170,7 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookingForm)], ['query']),
+    'getAllSubmissions' : IDL.Func([], [IDL.Vec(BookingSubmission)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getUserProfile' : IDL.Func(
@@ -165,7 +180,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'submitForm' : IDL.Func(
+    'submitBooking' : IDL.Func(
         [
           IDL.Text,
           IDL.Text,
@@ -176,7 +191,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Nat,
           IDL.Text,
         ],
-        [],
+        [SubmissionResult],
         [],
       ),
   });

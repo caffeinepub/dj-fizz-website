@@ -1,23 +1,65 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T21:12:14.157Z",
-  "summary": "The diff modifies frontend/src/pages/AdminPage.tsx, which is the correct file per REQ-16. However, the diff is truncated and we cannot fully confirm the removal of the authentication gate. The file summary in frontend-file-summaries.txt still describes the old behavior ('requires Internet Identity login to view booking submissions — shows a styled login prompt when unauthenticated'), suggesting the summary may not have been updated. The truncated code still imports useInternetIdentity and LogIn/LogOut icons, which were part of the authentication gate. This raises concern that the auth check may not have been fully removed, though the truncation prevents full confirmation.",
+  "generatedAt": "2026-03-01T21:31:51.019Z",
+  "summary": "The diff implements most of the required changes but has critical violations: the backend getAllSubmissions is admin-gated (contradicting REQ-20/REQ-21 which require no auth), the AdminPage still contains auth/login logic (contradicting REQ-21), and the useGetAllSubmissions hook depends on actor availability tied to authentication state rather than using a pure anonymous actor.",
   "missing_requirements": [
     {
-      "id": "REQ-16",
-      "requirement": "Remove the authentication check and login gate from AdminPage.tsx so /admin is fully accessible without login or identity verification, with all submissions fetched and displayed immediately on page load.",
-      "reason": "The truncated diff still shows imports of useInternetIdentity, LogIn, and LogOut from the authentication flow. The frontend-file-summaries.txt still describes the page as requiring Internet Identity login. While the diff is truncated and may contain the removal further down, the visible evidence suggests the authentication gate may not have been fully removed.",
+      "id": "REQ-19",
+      "requirement": "getAllSubmissions must be accessible without authentication (no auth gate), returning all submissions as an array",
+      "reason": "In backend/main.mo, getAllSubmissions checks AccessControl.hasPermission for #admin and calls Runtime.trap if unauthorized. The build request explicitly states 'Do not require Internet Identity authentication for admin page viewing' and REQ-19 requires the function to return all stored submissions without access control.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "requirement": "useGetAllSubmissions must use an anonymous actor (no authentication required) and run automatically on mount without requiring login",
+      "reason": "The hook uses useActor() which appears to be tied to authentication state (enabled: !!actor && !isFetching). If the actor requires login to be available, the hook will not run for unauthenticated users. The requirement explicitly says to use an anonymous actor with no dependency on Internet Identity.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "requirement": "Admin page must load immediately without any login prompt or auth gate",
+      "reason": "The frontend-file-summaries.txt describes AdminPage.tsx as requiring 'admin login to view booking submissions' and showing 'a login prompt when unauthenticated'. The diff still imports useInternetIdentity and LogIn/LogOut icons, strongly indicating auth gating remains.",
       "evidence": [
         "frontend/src/pages/AdminPage.tsx",
         "frontend-file-summaries.txt"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.45,
+  "hallucinated_features": [
+    {
+      "description": "backend/migration.mo was added as a new module to handle state migration between old and new actor schemas",
+      "reason": "The build request does not mention or require a migration module. This is extra infrastructure not requested.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "description": "Admin-only access control gate on getAllSubmissions backend function",
+      "reason": "The build request explicitly says not to add authentication or access control to the admin page, and REQ-19/REQ-21 require no auth. Adding an admin-only permission check on getAllSubmissions is a hallucinated feature.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Migration integration via 'with migration = Migration.run' clause in the actor definition",
+      "reason": "No migration was requested in the build request. This feature was added without being specified.",
+      "evidence": [
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.82,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/AdminPage.tsx",
     "project_state.json"
   ]

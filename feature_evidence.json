@@ -2,8 +2,28 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-in-frontend-src-pages-adminpage-tsx-remove-the-authentication-check-and-any-login-gate-that-blocks-access-to-the-page-the-admin-route-must-be-fully-accessible-without-any-login-or-identity-verification-remove-any-conditional-rendering-that-shows-an-admin-access-required-or-please-log-in-error-message-and-ensure-all-booking-submissions-are-fetched-and-displayed-immediately-when-the-page-loads-without-requiring-authentication",
-      "featureTitle": "In frontend/src/pages/AdminPage.tsx, remove the authentication check and any login gate that blocks access to the page. The /admin route must be fully accessible without any login or identity verification — remove any conditional rendering that shows an 'admin access required' or 'please log in' error message, and ensure all booking submissions are fetched and displayed immediately when the page loads without requiring authentication.",
+      "featureId": "feature-rewrite-the-usegetallsubmissions-hook-in-frontend-src-hooks-usequeries-ts-to-call-the-correct-backend-query-method-getallsubmissions-using-an-anonymous-actor-no-authentication-required-ensure-the-hook-correctly-unpacks-the-returned-array-handles-both-empty-arrays-and-populated-arrays-and-does-not-depend-on-internet-identity-being-logged-in-the-query-should-run-automatically-on-page-load-with-no-manual-trigger",
+      "featureTitle": "Rewrite the `useGetAllSubmissions` hook in `frontend/src/hooks/useQueries.ts` to call the correct backend query method (`getAllSubmissions`) using an anonymous actor (no authentication required). Ensure the hook correctly unpacks the returned array, handles both empty arrays and populated arrays, and does not depend on Internet Identity being logged in. The query should run automatically on page load with no manual trigger.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-20"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-frontend-src-pages-adminpage-tsx-to-consume-the-fixed-usegetallsubmissions-hook-and-render-all-returned-submission-records-as-styled-cards-each-card-must-display-name-email-phone-event-type-event-date-venue-guest-count-additional-details-and-submission-timestamp-remove-any-remaining-authentication-check-or-login-gate-show-a-clear-empty-state-message-when-no-submissions-exist-show-a-loading-indicator-while-the-query-is-in-flight-show-an-error-message-if-the-query-fails",
+      "featureTitle": "Update `frontend/src/pages/AdminPage.tsx` to consume the fixed `useGetAllSubmissions` hook and render all returned submission records as styled cards. Each card must display: name, email, phone, event type, event date, venue, guest count, additional details, and submission timestamp. Remove any remaining authentication check or login gate. Show a clear empty-state message when no submissions exist. Show a loading indicator while the query is in flight. Show an error message if the query fails.",
       "files": [
         "frontend/src/pages/AdminPage.tsx"
       ],
@@ -17,7 +37,27 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-16"
+        "REQ-21"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-frontend-src-components-bookingform-tsx-uses-the-usesubmitform-mutation-hook-correctly-and-displays-clear-success-and-error-feedback-after-submission-the-mutation-must-call-the-backend-submitbooking-function-with-all-8-fields-name-email-phone-eventtype-eventdate-venue-guestcount-additionaldetails-using-an-anonymous-actor-on-success-show-a-confirmation-message-and-reset-the-form-on-error-show-an-error-message-without-losing-the-entered-data",
+      "featureTitle": "Ensure `frontend/src/components/BookingForm.tsx` uses the `useSubmitForm` mutation hook correctly and displays clear success and error feedback after submission. The mutation must call the backend `submitBooking` function with all 8 fields (name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails) using an anonymous actor. On success, show a confirmation message and reset the form. On error, show an error message without losing the entered data.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
       ],
       "confidence": "high"
     }

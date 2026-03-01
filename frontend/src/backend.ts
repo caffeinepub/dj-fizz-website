@@ -89,31 +89,43 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface _CaffeineStorageRefillResult {
-    success?: boolean;
-    topped_up_amount?: bigint;
-}
-export type Time = bigint;
-export interface _CaffeineStorageRefillInformation {
-    proposed_top_up_amount?: bigint;
-}
-export interface _CaffeineStorageCreateCertificateResult {
-    method: string;
-    blob_hash: string;
-}
-export interface UserProfile {
-    name: string;
-}
 export interface BookingForm {
     additionalDetails: string;
     venue: string;
     guestCount: bigint;
     name: string;
+    submittedAt: Time;
     email: string;
-    timestamp: Time;
     phone: string;
     eventDate: string;
     eventType: string;
+}
+export type Time = bigint;
+export interface _CaffeineStorageRefillInformation {
+    proposed_top_up_amount?: bigint;
+}
+export interface BookingSubmission {
+    id: bigint;
+    booking: BookingForm;
+    timestamp: Time;
+}
+export interface _CaffeineStorageCreateCertificateResult {
+    method: string;
+    blob_hash: string;
+}
+export type SubmissionResult = {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "error";
+    error: string;
+};
+export interface UserProfile {
+    name: string;
+}
+export interface _CaffeineStorageRefillResult {
+    success?: boolean;
+    topped_up_amount?: bigint;
 }
 export enum UserRole {
     admin = "admin",
@@ -129,15 +141,15 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    getAllSubmissions(): Promise<Array<BookingForm>>;
+    getAllSubmissions(): Promise<Array<BookingSubmission>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    submitForm(name: string, email: string, phone: string, eventType: string, eventDate: string, venue: string, guestCount: bigint, additionalDetails: string): Promise<void>;
+    submitBooking(name: string, email: string, phone: string, eventType: string, eventDate: string, venue: string, guestCount: bigint, additionalDetails: string): Promise<SubmissionResult>;
 }
-import type { UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { SubmissionResult as _SubmissionResult, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -252,7 +264,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getAllSubmissions(): Promise<Array<BookingForm>> {
+    async getAllSubmissions(): Promise<Array<BookingSubmission>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllSubmissions();
@@ -336,20 +348,23 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async submitForm(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: bigint, arg7: string): Promise<void> {
+    async submitBooking(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: bigint, arg7: string): Promise<SubmissionResult> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitForm(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-                return result;
+                const result = await this.actor.submitBooking(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                return from_candid_SubmissionResult_n13(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitForm(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-            return result;
+            const result = await this.actor.submitBooking(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            return from_candid_SubmissionResult_n13(this._uploadFile, this._downloadFile, result);
         }
     }
+}
+function from_candid_SubmissionResult_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SubmissionResult): SubmissionResult {
+    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n12(_uploadFile, _downloadFile, value);
@@ -386,6 +401,25 @@ function from_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Ui
     guest: null;
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
+}
+function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: bigint;
+} | {
+    error: string;
+}): {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "error";
+    error: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "error" in value ? {
+        __kind__: "error",
+        error: value.error
+    } : value;
 }
 function to_candid_UserRole_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n9(_uploadFile, _downloadFile, value);
