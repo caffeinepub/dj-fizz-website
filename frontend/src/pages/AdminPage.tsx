@@ -1,6 +1,4 @@
 import { useGetAllSubmissions } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Loader2,
   Inbox,
@@ -11,9 +9,7 @@ import {
   Phone,
   FileText,
   Clock,
-  LogOut,
   RefreshCw,
-  LogIn,
 } from 'lucide-react';
 import type { BookingSubmission } from '../backend';
 
@@ -121,32 +117,7 @@ function SubmissionCard({ submission }: { submission: BookingSubmission }) {
 }
 
 export default function AdminPage() {
-  const { identity, login, clear, loginStatus } = useInternetIdentity();
-  const queryClient = useQueryClient();
-  const isAuthenticated = !!identity;
-  const isLoggingIn = loginStatus === 'logging-in';
-
   const { data: submissions, isLoading, isError, error, refetch, isFetching } = useGetAllSubmissions();
-
-  const handleLogout = async () => {
-    await clear();
-    queryClient.clear();
-  };
-
-  const handleLogin = async () => {
-    try {
-      await login();
-    } catch (err: unknown) {
-      console.error('Login error:', err);
-    }
-  };
-
-  // Determine if the error is an auth error
-  const isAuthError =
-    isError &&
-    error instanceof Error &&
-    (error.message.toLowerCase().includes('unauthorized') ||
-      error.message.toLowerCase().includes('only admin'));
 
   return (
     <main className="min-h-screen bg-djblack pt-24 pb-16">
@@ -178,127 +149,31 @@ export default function AdminPage() {
                   <p className="text-white/40 text-xs tracking-widest uppercase">Total</p>
                 </div>
               )}
-              {isAuthenticated && (
-                <button
-                  onClick={() => refetch()}
-                  disabled={isFetching}
-                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors disabled:opacity-40"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}
-                  title="Refresh submissions"
-                >
-                  <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />
-                  Refresh
-                </button>
-              )}
-              {isAuthenticated ? (
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <LogOut size={14} />
-                  Logout
-                </button>
-              ) : (
-                <button
-                  onClick={handleLogin}
-                  disabled={isLoggingIn}
-                  className="flex items-center gap-2 px-4 py-2 rounded-sm text-xs tracking-widest uppercase transition-colors disabled:opacity-40"
-                  style={{
-                    background: 'rgba(57,255,20,0.08)',
-                    border: '1px solid rgba(57,255,20,0.3)',
-                    color: '#39ff14',
-                  }}
-                >
-                  {isLoggingIn ? (
-                    <Loader2 size={14} className="animate-spin" />
-                  ) : (
-                    <LogIn size={14} />
-                  )}
-                  {isLoggingIn ? 'Logging in...' : 'Admin Login'}
-                </button>
-              )}
+              <button
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="flex items-center gap-2 px-4 py-2 rounded-sm text-white/50 hover:text-white/80 text-xs tracking-widest uppercase transition-colors disabled:opacity-40"
+                style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                title="Refresh submissions"
+              >
+                <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />
+                Refresh
+              </button>
             </div>
           </div>
           <div className="section-divider mt-8" />
         </div>
 
-        {/* Not authenticated — prompt login */}
-        {!isAuthenticated && !isLoading && (
-          <div className="flex flex-col items-center justify-center py-24 gap-6">
-            <div
-              className="w-20 h-20 rounded-sm flex items-center justify-center"
-              style={{
-                background: 'rgba(57,255,20,0.05)',
-                border: '1px solid rgba(57,255,20,0.15)',
-              }}
-            >
-              <LogIn size={36} className="text-neon-green/40" />
-            </div>
-            <div className="text-center">
-              <p className="text-white/60 font-semibold text-lg mb-2">Admin access required</p>
-              <p className="text-white/30 text-sm mb-6">
-                Please log in with your admin account to view booking submissions.
-              </p>
-              <button
-                onClick={handleLogin}
-                disabled={isLoggingIn}
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-sm text-sm font-semibold tracking-widest uppercase transition-all duration-200 disabled:opacity-40"
-                style={{
-                  background: 'rgba(57,255,20,0.1)',
-                  border: '1px solid rgba(57,255,20,0.4)',
-                  color: '#39ff14',
-                }}
-              >
-                {isLoggingIn ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <LogIn size={16} />
-                )}
-                {isLoggingIn ? 'Logging in...' : 'Login as Admin'}
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Loading submissions */}
-        {isAuthenticated && isLoading && (
+        {isLoading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <Loader2 size={40} className="text-neon-green animate-spin" />
             <p className="text-white/40 text-sm tracking-widest uppercase">Loading submissions...</p>
           </div>
         )}
 
-        {/* Auth error */}
-        {isAuthenticated && !isLoading && isAuthError && (
-          <div
-            className="rounded-sm p-8 text-center"
-            style={{
-              background: 'rgba(255,165,0,0.05)',
-              border: '1px solid rgba(255,165,0,0.2)',
-            }}
-          >
-            <p className="text-orange-400 font-semibold mb-2">Access Denied</p>
-            <p className="text-white/40 text-sm mb-4">
-              Your account does not have admin privileges to view submissions.
-            </p>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 px-6 py-2 rounded-sm text-xs tracking-widest uppercase transition-colors"
-              style={{
-                background: 'rgba(255,165,0,0.1)',
-                border: '1px solid rgba(255,165,0,0.3)',
-                color: 'rgb(251,191,36)',
-              }}
-            >
-              <LogOut size={14} />
-              Logout &amp; Try Another Account
-            </button>
-          </div>
-        )}
-
-        {/* General error fetching submissions */}
-        {isAuthenticated && !isLoading && isError && !isAuthError && (
+        {/* Error state */}
+        {!isLoading && isError && (
           <div
             className="rounded-sm p-8 text-center"
             style={{
@@ -308,7 +183,7 @@ export default function AdminPage() {
           >
             <p className="text-red-400 font-semibold mb-2">Unable to load submissions</p>
             <p className="text-white/40 text-sm mb-4">
-              There was an error fetching the booking submissions. Please try again.
+              {error instanceof Error ? error.message : 'There was an error fetching the booking submissions. Please try again.'}
             </p>
             <button
               onClick={() => refetch()}
@@ -326,7 +201,7 @@ export default function AdminPage() {
         )}
 
         {/* Empty state */}
-        {isAuthenticated && !isLoading && !isError && submissions && submissions.length === 0 && (
+        {!isLoading && !isError && submissions && submissions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-6">
             <div
               className="w-20 h-20 rounded-sm flex items-center justify-center"
@@ -347,7 +222,7 @@ export default function AdminPage() {
         )}
 
         {/* Submissions list */}
-        {isAuthenticated && !isLoading && !isError && submissions && submissions.length > 0 && (
+        {!isLoading && !isError && submissions && submissions.length > 0 && (
           <div className="space-y-6">
             {[...submissions].reverse().map((submission) => (
               <SubmissionCard key={submission.id.toString()} submission={submission} />

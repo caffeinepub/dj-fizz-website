@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the end-to-end booking submission flow so that bookings are reliably stored in the backend and correctly displayed on the admin page.
+**Goal:** Remove all authentication gates from the admin page so it is accessible without login.
 
 **Planned changes:**
-- Rewrite the Motoko `submitBooking` function in `backend/main.mo` to ensure stable persistence with an auto-incremented ID, and add a `getAllSubmissions` public query function returning all stored submission records
-- Rewrite the `useGetAllSubmissions` hook in `frontend/src/hooks/useQueries.ts` to call `getAllSubmissions` via an anonymous actor, running automatically on mount without requiring login
-- Update `frontend/src/pages/AdminPage.tsx` to display all submission records as styled cards (name, email, phone, event type, event date, venue, guest count, additional details, timestamp), remove any auth gate, and show loading/error/empty states using the site's black and neon green palette
-- Fix `frontend/src/components/BookingForm.tsx` to call `submitBooking` with all 8 fields via an anonymous actor, showing a success message and resetting the form on success, or showing an error without losing form data on failure
+- In `AdminPage.tsx`, remove all authentication checks, login gates, and conditional rendering based on auth state so the page renders immediately on load
+- Remove all references to `useInternetIdentity`, `isAuthenticated`, or any auth state that blocks content display
+- In `useGetAllSubmissions` hook, replace any authenticated actor with a fully anonymous `HttpAgent`-based actor so submissions are fetched automatically on mount without requiring a logged-in identity
+- Ensure the hook correctly unpacks both empty and populated arrays of submission records
 
-**User-visible outcome:** Booking form submissions are reliably stored and immediately visible on the admin page at `/admin` without any login requirement. The admin page shows all bookings as cards with full details, a loading indicator while fetching, an error message on failure, and an empty state when no bookings exist.
+**User-visible outcome:** Navigating to `/admin` in a fresh browser session (not logged in) immediately shows the admin page with all booking submissions, a loading indicator while fetching, an empty-state message when there are no submissions, and an error message if the query fails.

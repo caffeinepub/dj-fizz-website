@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 31,
+  "projectStateVersion": 33,
   "summary": "Building a modern, elegant DJ website for DJ Fizz. Color palette: black base with electric green accents and glow effects (matching the DJ Fizz logo). Full-width cinematic layout with smooth scrolling, fade-in animations, and stage lighting effects. Sections include: hero, about (with portrait photo), services (4-column), premium add-ons, testimonials, event gallery, SEO section, 'More Than Just Music' section, and a booking form. Booking form submissions stored in backend with an admin page for viewing. No flat prices — custom packages messaging. Targeting weddings, corporate events, school dances, and private parties in Raleigh, NC.",
   "architectural_notes": [
     "Color palette: black base with electric green accents and glow effects, matched to the DJ Fizz logo (no gold)",
@@ -9,8 +9,8 @@
   ],
   "known_issues": [
     "Gallery section content wrapper still visible after attempted removal — needs to be fully deleted from Gallery.tsx",
-    "Admin page shows authentication error blocking access — needs login gate removed so /admin is accessible without authentication",
-    "Booking form submissions are intermittently failing (second submission returned failure message); admin page not displaying stored submissions"
+    "Booking form submissions are intermittently failing (second submission returned failure message); admin page not displaying stored submissions",
+    "Admin page at /admin is again blocking access with authentication gate in Version 15 — authentication check needs to be fully removed"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -165,6 +165,14 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-in-frontend-src-pages-adminpage-tsx-completely-remove-all-authentication-checks-login-gates-and-any-conditional-rendering-that-blocks-or-restricts-access-to-the-admin-route-the-page-must-render-immediately-on-load-without-requiring-internet-identity-login-or-any-identity-verification-remove-all-references-to-useinternetidentity-isauthenticated-or-any-auth-state-that-gates-the-display-of-content-ensure-usegetallsubmissions-is-called-unconditionally-on-mount-and-submissions-are-displayed-as-soon-as-the-query-resolves",
+      "title": "In `frontend/src/pages/AdminPage.tsx`, completely remove all authentication checks, login gates, and any conditional rendering that blocks or restricts access to the /admin route. The page must render immediately on load without requiring Internet Identity login or any identity verification. Remove all references to `useInternetIdentity`, `isAuthenticated`, or any auth state that gates the display of content. Ensure `useGetAllSubmissions` is called unconditionally on mount and submissions are displayed as soon as the query resolves.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -275,6 +283,14 @@
       "summary": "Audit and rewrite the Motoko backend `submitBooking` function in `backend/main.mo` to guarantee reliable persistence of every submission. Ensure the stable `submissions` Map (or equivalent stable structure) is correctly declared with `stable` keyword, properly initialized, and that `submitBooking` always appends the new entry with an auto-incremented ID and returns `#ok`. Add a `getAllSubmissions` public query function that returns all stored submissions as an array of records including id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, and submittedAt timestamp. Eliminate any pattern that could cause silent failures or state loss across canister upgrades.",
       "reqIds": [
         "REQ-19"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "In `frontend/src/hooks/useQueries.ts`, ensure the `useGetAllSubmissions` hook creates and uses a fully anonymous actor (no Internet Identity dependency) to call the `getAllSubmissions` backend query. The hook must not reference or depend on any auth state, must not wait for a logged-in identity, and must run the query automatically on mount. Correctly unpack the returned array of submission records.",
+      "reqIds": [
+        "REQ-24"
       ],
       "status": "pending"
     }

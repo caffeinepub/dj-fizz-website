@@ -1,102 +1,61 @@
 {
   "kind": "build_request",
-  "title": "Fix booking submissions end-to-end: backend persistence, query hook, and admin display",
+  "title": "Fix admin page authentication gate blocking access",
   "projectName": "DJ Fizz",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-19",
-      "text": "Audit and rewrite the Motoko backend `submitBooking` function in `backend/main.mo` to guarantee reliable persistence of every submission. Ensure the stable `submissions` Map (or equivalent stable structure) is correctly declared with `stable` keyword, properly initialized, and that `submitBooking` always appends the new entry with an auto-incremented ID and returns `#ok`. Add a `getAllSubmissions` public query function that returns all stored submissions as an array of records including id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, and submittedAt timestamp. Eliminate any pattern that could cause silent failures or state loss across canister upgrades.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Bookings still do not show up"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Submitting a booking form always results in the entry being stored and retrievable via getAllSubmissions",
-        "The stable map/array persists across upgrades without data loss",
-        "getAllSubmissions returns all previously stored entries in an array",
-        "submitBooking always returns #ok on valid input and never silently drops data",
-        "Each submission record includes: id, name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails, submittedAt"
-      ]
-    },
-    {
-      "id": "REQ-20",
-      "text": "Rewrite the `useGetAllSubmissions` hook in `frontend/src/hooks/useQueries.ts` to call the correct backend query method (`getAllSubmissions`) using an anonymous actor (no authentication required). Ensure the hook correctly unpacks the returned array, handles both empty arrays and populated arrays, and does not depend on Internet Identity being logged in. The query should run automatically on page load with no manual trigger.",
+      "id": "REQ-23",
+      "text": "In `frontend/src/pages/AdminPage.tsx`, completely remove all authentication checks, login gates, and any conditional rendering that blocks or restricts access to the /admin route. The page must render immediately on load without requiring Internet Identity login or any identity verification. Remove all references to `useInternetIdentity`, `isAuthenticated`, or any auth state that gates the display of content. Ensure `useGetAllSubmissions` is called unconditionally on mount and submissions are displayed as soon as the query resolves.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "Bookings still do not show up"
+          "it's not allowing me to view admin"
         ]
       },
       "acceptanceCriteria": [
-        "useGetAllSubmissions calls actor.getAllSubmissions() using an anonymous actor",
-        "The hook runs automatically on mount without requiring login",
-        "Returned data is correctly typed and mapped to the submission record shape",
-        "Empty array is handled gracefully (shows empty state, no crash)",
-        "Populated array is surfaced to the component as an array of submission objects"
+        "Navigating to /admin in a fresh browser session (not logged in) renders the admin page immediately with no login prompt or access-denied message",
+        "All booking submissions are fetched and displayed without any authentication step",
+        "No conditional rendering based on login/auth state exists in AdminPage.tsx",
+        "The page shows a loading indicator while submissions are being fetched",
+        "The page shows an empty-state message when no submissions exist",
+        "The page shows an error message if the query fails"
       ]
     },
     {
-      "id": "REQ-21",
-      "text": "Update `frontend/src/pages/AdminPage.tsx` to consume the fixed `useGetAllSubmissions` hook and render all returned submission records as styled cards. Each card must display: name, email, phone, event type, event date, venue, guest count, additional details, and submission timestamp. Remove any remaining authentication check or login gate. Show a clear empty-state message when no submissions exist. Show a loading indicator while the query is in flight. Show an error message if the query fails.",
+      "id": "REQ-24",
+      "text": "In `frontend/src/hooks/useQueries.ts`, ensure the `useGetAllSubmissions` hook creates and uses a fully anonymous actor (no Internet Identity dependency) to call the `getAllSubmissions` backend query. The hook must not reference or depend on any auth state, must not wait for a logged-in identity, and must run the query automatically on mount. Correctly unpack the returned array of submission records.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "Bookings still do not show up"
+          "it's not allowing me to view admin"
         ]
       },
       "acceptanceCriteria": [
-        "Admin page at /admin loads immediately without any login prompt or auth gate",
-        "All stored booking submissions are displayed as cards with all 9 fields visible",
-        "A loading spinner or skeleton is shown while submissions are being fetched",
-        "An error message is displayed if the fetch fails",
-        "An empty-state message is shown when there are no submissions",
-        "Page styling matches the site's black and neon green palette"
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "text": "Ensure `frontend/src/components/BookingForm.tsx` uses the `useSubmitForm` mutation hook correctly and displays clear success and error feedback after submission. The mutation must call the backend `submitBooking` function with all 8 fields (name, email, phone, eventType, eventDate, venue, guestCount, additionalDetails) using an anonymous actor. On success, show a confirmation message and reset the form. On error, show an error message without losing the entered data.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Bookings still do not show up"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Submitting the booking form calls submitBooking on the backend with all 8 fields",
-        "A success confirmation message is displayed after a successful submission",
-        "The form resets after a successful submission",
-        "An error message is displayed if the submission fails, preserving form data",
-        "The mutation uses an anonymous actor so no login is required to submit"
+        "useGetAllSubmissions does not import or use useInternetIdentity or any authenticated actor",
+        "The hook uses an anonymous HttpAgent to instantiate the backend actor",
+        "The query executes automatically without a manual trigger",
+        "Both empty arrays and populated arrays are handled correctly without runtime errors",
+        "The returned data is correctly typed and accessible in AdminPage.tsx"
       ]
     }
   ],
   "constraints": [
-    "All Motoko logic must remain in the single actor in backend/main.mo",
-    "Do not require Internet Identity authentication for booking form submission or admin page viewing",
-    "frontend/src/hooks/useActor.ts and frontend/src/hooks/useInternetIdentity.ts are read-only and must not be modified",
-    "frontend/src/main.tsx and frontend/src/components/ui are read-only and must not be modified"
+    "Do not add any authentication requirement to the /admin route",
+    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, or frontend/src/main.tsx",
+    "Do not change the backend data model or Motoko actor logic"
   ],
   "nonGoals": [
-    "Adding authentication or access control to the admin page",
-    "Changing the visual design of sections other than the admin page",
-    "Adding pagination or search/filter to the admin submissions list",
-    "Email notifications for new bookings"
+    "Adding role-based access control or admin password protection",
+    "Changing the visual design or card layout of the admin page",
+    "Modifying the booking form or any other page",
+    "Backend changes"
   ],
   "imageRequirements": {
     "required": [],

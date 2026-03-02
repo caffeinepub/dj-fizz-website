@@ -5,12 +5,12 @@ import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
 import AccessControl "authorization/access-control";
 import Nat "mo:core/Nat";
-import Migration "migration";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 
 // Specify migration function in the with clause for automatic state upgrade.
-(with migration = Migration.run)
+
 actor {
   include MixinStorage();
 
